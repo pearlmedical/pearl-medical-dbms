@@ -2,7 +2,7 @@
 
 import React,{ useState } from 'react';
 import Layout from '@/components/Layout';
-import { Form,Button,Row,Col } from 'react-bootstrap';
+import { Form,Button,Row,Col,Alert } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -11,16 +11,54 @@ const CreateBill = () => {
     const [date_of_sale,setDateOfSale] = useState(new Date());
     const [remarks,setRemarks] = useState('');
     const [total_amount,setTotalAmount] = useState('');
+    const [successMessage,setSuccessMessage] = useState('');
+    const [errorMessage,setErrorMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission here
-        console.log('Form submitted:',{ user_id,date_of_sale,remarks,total_amount });
+
+        // Validate user_id format (6 digits)
+        const userIdRegex = /^\d{6}$/;
+        if (!userIdRegex.test(user_id)) {
+            setSuccessMessage('');
+            setErrorMessage('User ID must be exactly 6 digits.');
+            return;
+        }
+
+        try {
+            // Make API call to addBill endpoint
+            const response = await fetch('/api/makeBill',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id,date_of_sale,remarks,total_amount }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setSuccessMessage(`Bill created successfully with ID: ${data.id}`);
+                setErrorMessage('');
+            } else {
+                const errorData = await response.json();
+                setSuccessMessage('');
+                setErrorMessage(`Error: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error creating bill:',error);
+            setSuccessMessage('');
+            setErrorMessage('Internal Server Error');
+        }
     };
+
 
     return (
         <div>
             <h2>Create Bill</h2>
+
+            {successMessage && <Alert variant="success">{successMessage}</Alert>}
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+
             <Form onSubmit={handleSubmit}>
                 <Row>
                     <Col md={6}>

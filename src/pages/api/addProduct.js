@@ -10,6 +10,7 @@ export default async function handler(req, res) {
     product_name,
     cost,
     remarks,
+    quantity
     // Add other product details as needed
   } = req.body;
 
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
     // Insert the new product into the products table
     const { data, error } = await supabase
       .from('products')
-      .insert([{ product_name:product_name, cost:cost,remarks: remarks }]).select();
+      .insert([{ product_name:product_name, cost:cost,remarks: remarks,quantity: quantity }]).select();
 
     if (error) {
       throw error;

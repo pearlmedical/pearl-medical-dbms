@@ -13,13 +13,14 @@ export default async function handler(req, res) {
     // Add other product details as needed
   } = req.body;
 
+  console.log('Request Body:', req.body);  // Log the request body for debugging purposes
   try {
     // Validate the request body here if needed
 
     // Insert the new product into the products table
     const { data, error } = await supabase
       .from('products')
-      .upsert([{ product_name, cost, remarks }], { returning: 'representation' });
+      .insert([{ product_name:product_name, cost:cost,remarks: remarks }]).select();
 
     if (error) {
       throw error;

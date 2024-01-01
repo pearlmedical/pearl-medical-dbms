@@ -22,16 +22,13 @@ export default async function handler(req, res) {
       .upsert([{ product_name, cost, remarks }], { returning: 'representation' });
 
     if (error) {
-      console.error('Error adding product:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+      throw error;
     }
 
-    // Check if data is not null
-    if (data) {
-      return res.status(201).json({ message: 'Product added successfully' });
-    } else {
-      return res.status(500).json({ message: 'Failed to add product' });
-    }
+    // Check if data is not null before accessing its elements
+    const newProduct = data && data.length > 0 ? data[0] : null;
+
+    return res.status(201).json(newProduct);
   } catch (error) {
     console.error('Error adding product:', error);
     return res.status(500).json({ message: 'Internal Server Error' });

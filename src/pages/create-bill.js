@@ -27,7 +27,7 @@ const CreateBill = () => {
 
         try {
             // Make API call to addBill endpoint
-            const response = await fetch('/api/makeBill',{
+            const response = await fetch('/api/addBill',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

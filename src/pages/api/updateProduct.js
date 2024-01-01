@@ -5,19 +5,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { product_id,   product_name,
+  const { product_id,product_name,
     cost,
     remarks, } = req.body;
 
   try {
     // Validate the request body here if needed
 
-    // Update the product attributes in the products table
     const { data, error } = await supabase
-      .from('products')
-      .update(product_name,cost,remarks)
-      .eq('product_id', product_id)
-      .select();
+    .from('products')
+    .update({ product_name: product_name,cost:cost,remarks:remarks })
+    .eq(product_id ,'product_id')
+    .select()
+  
+   
 
     console.log('Response Data:', data);  // Log the response data
     console.log('Error:', error);  // Log the error

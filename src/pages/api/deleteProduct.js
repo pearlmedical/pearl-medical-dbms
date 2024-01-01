@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       const deletedProduct = data[0];
       return res.status(200).json(deletedProduct);
     } else {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: 'Product Deleted Succesfully' });
     }
   } catch (error) {
     console.error('Error deleting product:', error);

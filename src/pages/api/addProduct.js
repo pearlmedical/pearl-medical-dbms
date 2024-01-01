@@ -13,6 +13,7 @@ export default async function handler(req, res) {
     // Add other product details as needed
   } = req.body;
 
+  console.log('Request Body:', req.body);  // Log the request body for debugging purposes
   try {
     // Validate the request body here if needed
 

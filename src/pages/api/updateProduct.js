@@ -14,12 +14,12 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
     .from('products')
-    .update({ product_name: product_name,cost:cost,remarks:remarks })
-    .eq(product_id ,'product_id')
+    .update({ product_name: product_name,cost:cost,remarks:remarks})
+    .eq('product_id', product_id)
     .select()
   
-   
-
+    // Update the product attributes in the products table
+ 
     console.log('Response Data:', data);  // Log the response data
     console.log('Error:', error);  // Log the error
 

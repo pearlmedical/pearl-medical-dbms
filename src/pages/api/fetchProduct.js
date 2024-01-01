@@ -1,5 +1,5 @@
 // api/getProduct.js
-import supabase from './db';
+import supabase from './dbConnect';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

@@ -15,7 +15,7 @@ const CreateUser = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/createUser', {
+            const response = await fetch('/api/addNewUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

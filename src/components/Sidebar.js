@@ -18,13 +18,16 @@ const Sidebar = () => {
                         <Nav.Link href="/edit-product">Edit Product</Nav.Link>
                         <Nav.Link href="/delete-product">Delete Product</Nav.Link>
                         <Nav.Link href="/add-product">Add Product</Nav.Link>
-                        <Nav.Link href="/create-bill">Create Bill</Nav.Link>
+
                         <Nav.Link href="/createUser">Create User</Nav.Link>
                         <Nav.Link href="/search-user">Search User</Nav.Link>
                         <Nav.Link href="/edit-user-details">Edit User Details</Nav.Link>
+
+                        <Nav.Link href="/create-bill">Create Bill</Nav.Link>
                         <Nav.Link href="/search-bill">Search Bill</Nav.Link>
-                        <Nav.Link href="/product-user">Product-User</Nav.Link>
-                        <Nav.Link href="/bill-customer">Bill-Customer</Nav.Link>
+
+                        <Nav.Link href="/search-product-by-userid">Search Product By User</Nav.Link>
+                        <Nav.Link href="/search-bill-by-userid">Search Bill By User</Nav.Link>
 
                     </Nav>
                 </Navbar.Collapse>

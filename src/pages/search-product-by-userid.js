@@ -5,7 +5,7 @@ import { Table,InputGroup,FormControl,Modal,Button } from 'react-bootstrap';
 import LoadingBar from 'react-top-loading-bar';
 import { BarLoader } from 'react-spinners';
 
-const ProductUser = () => {
+const SearchProductByUserID = () => {
     const [searchTerm,setSearchTerm] = useState('');
     const [allProducts,setAllProducts] = useState([]);
     const [selectedProduct,setSelectedProduct] = useState(null);
@@ -175,4 +175,4 @@ const ProductUser = () => {
     );
 };
 
-export default ProductUser;
+export default SearchProductByUserID;

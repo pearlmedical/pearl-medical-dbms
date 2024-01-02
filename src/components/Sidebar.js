@@ -9,7 +9,7 @@ const Sidebar = () => {
     const router = useRouter();
 
     return (
-        <div style={{ width: '15%',height: '100vh',top: 0,left: 0,overflowY: 'auto' }}>
+        <div style={{ width: '13%',height: '100vh',top: 0,left: 0,overflowY: 'auto' }}>
             <Navbar bg="light" expand="lg">
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -25,7 +25,7 @@ const Sidebar = () => {
                         <Nav.Link href="/search-bill">Search Bill</Nav.Link>
                         <Nav.Link href="/product-customer">Product-Customer</Nav.Link>
                         <Nav.Link href="/bill-customer">Bill-Customer</Nav.Link>
-                     
+
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

@@ -9,7 +9,7 @@ const CreateBill = () => {
     const [user_id,setUserId] = useState('');
     const [date_of_sale,setDateOfSale] = useState(new Date());
     const [remarks,setRemarks] = useState('');
-    const [total_amount,setTotalAmount] = useState('');
+    const [total_amount,setTotalAmount] = useState(0);
     const [successMessage,setSuccessMessage] = useState('');
     const [errorMessage,setErrorMessage] = useState('');
 
@@ -18,10 +18,21 @@ const CreateBill = () => {
     const [selectedProducts,setSelectedProducts] = useState([]);
     const [searchTerm,setSearchTerm] = useState('');
 
+    const handleTotalAmountChange = (e) => {
+        setTotalAmount(e.target.value);
+    };
+
+    // Function to update total amount
+    const updateTotalAmount = () => {
+        const totalAmount = calculateTotalAmount();
+        setTotalAmount(totalAmount);
+        console.log("updated");
+    };
+
     // Function to handle product selection and removal
     const handleProductAction = (product,quantity = 1) => {
         const isProductSelected = selectedProducts.find((selected) => selected.product_id === product.product_id);
-        
+
         setSelectedProducts([...selectedProducts,{ ...product,quantity }]);
 
         if (isProductSelected) {
@@ -73,6 +84,8 @@ const CreateBill = () => {
             setErrorMessage('User ID must be exactly 6 digits.');
             return;
         }
+        
+        // console.log(JSON.stringify({ user_id,date_of_sale,remarks,total_amount }));
 
         try {
             // Make API call to addBill endpoint
@@ -85,9 +98,43 @@ const CreateBill = () => {
             });
 
             if (response.ok) {
+
                 const data = await response.json();
-                setSuccessMessage(`Bill created successfully with ID: ${data.id}`);
-                setErrorMessage('');
+                console.log(data);
+
+
+                // Make API call to another endpoint
+                const postData = {
+                    user_id: user_id,
+                    bill_id: data.bill_id,
+                    products: selectedProducts
+                };
+
+                console.log(postData);
+
+                try {
+                    const postResponse = await fetch('/api/addProductPurchased',{
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(postData),
+                    });
+
+                    if (postResponse.ok) {
+                        // Handle success
+                        setTimeout(() => {
+                            setSuccessMessage(`Bill created successfully with ID: ${data.bill_id}`);
+                        }, 3000);
+                    } else {
+                        const errorData = await postResponse.json();
+                        // Handle error
+                    }
+                } catch (error) {
+                    console.error('Error:',error);
+                    // Handle error
+                }
+
             } else {
                 const errorData = await response.json();
                 setSuccessMessage('');
@@ -137,19 +184,6 @@ const CreateBill = () => {
         }
     };
 
-    // const handleSelectedProductsRowClick = (clickedProduct) => {
-    //     // Remove the product if double-clicked
-    //     const updatedSelectedProducts = selectedProducts.filter((product) => product.product_id !== clickedProduct.product_id);
-    //     setSelectedProducts(updatedSelectedProducts);
-
-    //     // Display a confirmation message
-    //     setErrorMessage(`Product "${clickedProduct.product_name}" removed from selected products.`);
-    // };
-
-    // const handleRowClickSelectedProducts = () => {
-    //     // Clicking on a product in the "Selected Products" table won't trigger any action
-    // };
-
     return (
         <div>
             <h2>Create Bill</h2>
@@ -197,12 +231,12 @@ const CreateBill = () => {
                         <Table striped bordered hover style={{ maxHeight: '300px',minHeight: '300px',overflowY: 'auto' }}>
                             <thead>
                                 <tr>
-                                    <th style={{ width: '15%' }}>Product ID</th>
-                                    <th style={{ width: '22%' }}>Product Name</th>
-                                    <th style={{ width: '17%' }}>Quantity</th>
-                                    <th style={{ width: '15%' }}>Cost</th>
-                                    <th style={{ width: '15%' }}>Price</th>
-                                    <th style={{ width: '5%' }}></th>
+                                    <th style={{ width: '10%' }}>Prod. ID</th>
+                                    <th style={{ minWidth: '25%' }}>Prod. Name</th>
+                                    <th style={{ minWidth: '20%' }}>Quantity</th>
+                                    <th style={{ minWidth: '12%' }}>Cost /-</th>
+                                    <th style={{ minWidth: '12%' }}>Total Price</th>
+                                    <th style={{ minWidth: '1%' }}></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -222,29 +256,38 @@ const CreateBill = () => {
                                                     <Button
                                                         variant="outline-secondary"
                                                         size="sm"
-                                                        onClick={() => handleDecreaseQuantity(selectedProduct)}
+                                                        onClick={() => {
+                                                            handleDecreaseQuantity(selectedProduct);
+                                                            updateTotalAmount(); // Update total amount when quantity changes
+                                                        }}
                                                     >
                                                         -
                                                     </Button>
                                                     <FormControl
                                                         type="number"
                                                         value={selectedProduct.quantity}
-                                                        onChange={(e) => handleProductAction(selectedProduct,e.target.value)}
+                                                        onChange={(e) => {
+                                                            handleProductAction(selectedProduct,e.target.value);
+                                                            updateTotalAmount();
+                                                        }}
                                                         inputMode="none"
                                                     />
                                                     <Button
                                                         variant="outline-secondary"
                                                         size="sm"
-                                                        onClick={() => handleIncreaseQuantity(selectedProduct)}
+                                                        onClick={() => {
+                                                            handleIncreaseQuantity(selectedProduct);
+                                                            updateTotalAmount();
+                                                        }}
                                                     >
                                                         +
                                                     </Button>
                                                 </InputGroup>
                                             </td>
-                                            <td>{selectedProduct.cost.toFixed(3)}</td>
-                                            <td>{(selectedProduct.cost * selectedProduct.quantity).toFixed(3)}</td>
+                                            <td style={{ fontSize: '1rem' }} >{selectedProduct.cost.toFixed(3)}</td>
+                                            <td style={{ fontSize: '1rem' }}>{(selectedProduct.cost * selectedProduct.quantity).toFixed(3)}</td>
                                             <td>
-                                                <Button variant='light' size="sm" onClick={() => handleRemoveProduct(selectedProduct)}>
+                                                <Button variant='light' size="sm" style={{ fontSize: '0.8rem',margin: '0',padding: '0' }} onClick={() => handleRemoveProduct(selectedProduct)}>
                                                     ❌
                                                 </Button>
                                             </td>
@@ -284,7 +327,12 @@ const CreateBill = () => {
                                             product.product_id.toString().includes(searchTerm) || product.product_name.includes(searchTerm)
                                     )
                                     .map((product) => (
-                                        <tr key={product.product_id} onClick={() => handleRowClick(product)}>
+                                        <tr key={product.product_id}
+                                            onClick={() => {
+                                                handleRowClick(product);
+                                                updateTotalAmount();
+                                            }}
+                                            >
                                             <td>{product.product_id}</td>
                                             <td>{product.product_name}</td>
                                             <td>{product.quantity || 0}</td>
@@ -300,7 +348,7 @@ const CreateBill = () => {
                 <Row>
                     <Col md={12} className="text-center">
                         <h4>Total Amount</h4>
-                        <p>{calculateTotalAmount()} INR</p>
+                        <p onChange={handleTotalAmountChange}>{calculateTotalAmount()} INR</p>
                     </Col>
                 </Row>
 

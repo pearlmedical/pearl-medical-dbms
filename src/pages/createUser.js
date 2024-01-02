@@ -104,6 +104,19 @@ const CreateUser = () => {
                         </Form.Group>
                     </Col>
                 </Row>
+                <Row>
+                <Col md={6}>
+                    <Form.Group controlId="address">
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Enter address"
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
                 <div className="sp" >
                     
                 </div>

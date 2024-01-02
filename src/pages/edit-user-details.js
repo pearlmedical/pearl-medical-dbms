@@ -33,12 +33,32 @@ const EditUser = () => {
         setShowModal(true);
     };
 
-    const handleUpdate = (updatedUser) => {
-        const updatedUsers = users.map((user) => (user.user_id === updatedUser.user_id ? updatedUser : user));
-        setUsers(updatedUsers);
-        setEditingUser(null);
-        setShowModal(false);
-    };
+    const handleUpdate = async (updatedUser) => {
+        try {
+          const response = await fetch('/api/editUserDetails', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedUser),
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            const updatedUsers = users.map((user) => (user.user_id === data.user_id ? data : user));
+            setUsers(updatedUsers);
+            setEditingUser(null);
+            setShowModal(false);
+          } else {
+            const errorData = await response.json();
+            console.error('Error updating user:', errorData);
+            // Handle error scenarios as needed
+          }
+        } catch (error) {
+          console.error('Error updating user:', error);
+          // Handle error scenarios as needed
+        }
+      };
 
     const handleCloseModal = () => {
         setEditingUser(null);

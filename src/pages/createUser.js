@@ -15,7 +15,7 @@ const CreateUser = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/addNewUser', {
+            const response = await fetch('/api/sales/addNewUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ const CreateUser = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setSuccessMessage(`User created successfully with ID: ${data.id}`);
+                setSuccessMessage(`User created successfully with ID: ${data.user_id}`);
                 setErrorMessage('');
             } else {
                 const errorData = await response.json();

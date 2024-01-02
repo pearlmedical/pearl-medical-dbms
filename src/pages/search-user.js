@@ -16,7 +16,7 @@ const SearchUser = () => {
     const fetchAllUsers = async () => {
         try {
             // Your actual API call to fetch users
-            const response = await fetch('api/fetchExistingUser');
+            const response = await fetch('api/sales/fetchExistingUser');
             const data = await response.json();
             console.log(data);
             setUsers(data);

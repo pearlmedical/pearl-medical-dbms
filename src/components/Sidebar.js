@@ -33,6 +33,8 @@ const Sidebar = () => {
                         <Nav.Link href="/search-user-by-productId">Search User By Product</Nav.Link>
                         <Nav.Link href="/search-product-by-userid">Search Product By User</Nav.Link>
                         <Nav.Link href="/search-bill-by-userid">Search Bill By User</Nav.Link>
+  
+            
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

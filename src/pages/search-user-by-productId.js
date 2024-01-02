@@ -19,7 +19,7 @@ const SearchProductByUserID = () => {
     const fetchAllProducts = async () => {
         setLoadingBarProgress(10); // Initial progress
         try {
-            const response = await fetch('/api/fetchAllProducts');
+            const response = await fetch('/api/sales/fetchAllProducts');
             if (response.ok) {
                 const data = await response.json();
                 setAllProducts(data);
@@ -43,7 +43,7 @@ const SearchProductByUserID = () => {
     const fetchUsers = async (productId) => {
         setUserLoading(true);
         try {
-            const response = await fetch(`/api/fetchUserFromProduct?productId=${productId}`);
+            const response = await fetch(`/api/sales/fetchUserFromProduct?productId=${productId}`);
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data);

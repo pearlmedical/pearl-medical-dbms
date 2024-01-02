@@ -16,7 +16,7 @@ const EditUser = () => {
     useEffect(() => {
         // Fetch users from the API or your database here
         const fetchData = async () => {
-          const response = await fetch('api/fetchExistingUser');
+          const response = await fetch('api/sales/fetchExistingUser');
           const data = await response.json();
           setUsers(data);
         };
@@ -35,7 +35,7 @@ const EditUser = () => {
 
     const handleUpdate = async (updatedUser) => {
         try {
-          const response = await fetch('/api/editUserDetails', {
+          const response = await fetch('/api/sales/editUserDetails', {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

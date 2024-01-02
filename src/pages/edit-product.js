@@ -16,7 +16,7 @@ const EditProduct = () => {
   useEffect(() => {
     // Fetch products from the API or your database here
     const fetchData = async () => {
-      const response = await fetch('api/fetchAllProducts');
+      const response = await fetch('api/sales/fetchAllProducts');
       const data = await response.json();
       setProducts(data);
     };
@@ -35,7 +35,7 @@ const EditProduct = () => {
 
   const handleUpdate = async (updatedProduct) => {
     try {
-      const response = await fetch('/api/updateProduct', {
+      const response = await fetch('/api/sales/updateProduct', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

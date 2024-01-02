@@ -16,7 +16,7 @@ const SearchBillByUserId = () => {
     // Function to fetch all users
     const fetchAllUsers = async () => {
         try {
-            const response = await fetch('/api/fetchExistingUser');
+            const response = await fetch('/api/sales/fetchExistingUser');
             if (response.ok) {
                 const data = await response.json();
                 setAllUsers(data);
@@ -32,7 +32,7 @@ const SearchBillByUserId = () => {
     const fetchBills = async (userId) => {
         setLoadingBills(true);
         try {
-            const response = await fetch(`/api/fetchParticularUserBills?userId=${userId}`);
+            const response = await fetch(`/api/sales/fetchParticularUserBills?userId=${userId}`);
             if (response.ok) {
                 const data = await response.json();
                 setBills(data);
@@ -49,7 +49,7 @@ const SearchBillByUserId = () => {
     // Function to fetch details of a bill
     const fetchBillDetails = async (billId) => {
         try {
-            const response = await fetch(`/api/fetchBillDetailsFromBill_Id?billId=${billId}`);
+            const response = await fetch(`/api/sales/fetchBillDetailsFromBill_Id?billId=${billId}`);
             if (response.ok) {
                 const data = await response.json();
                 setSelectedBill(data);

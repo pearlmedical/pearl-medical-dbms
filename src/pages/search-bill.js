@@ -11,7 +11,7 @@ const SearchBills = () => {
   // Fetch bills from the API
   const fetchAllBills = async () => {
     try {
-      const response = await fetch('api/fetchAllBills');
+      const response = await fetch('api/sales/fetchAllBills');
       const data = await response.json();
       setBills(data);
     } catch (error) {

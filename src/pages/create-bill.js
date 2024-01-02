@@ -59,7 +59,7 @@ const CreateBill = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('/api/fetchAllProducts');
+                const response = await fetch('/api/sales/fetchAllProducts');
                 if (response.ok) {
                     const data = await response.json();
                     setAllProducts(data);
@@ -89,7 +89,7 @@ const CreateBill = () => {
 
         try {
             // Make API call to addBill endpoint
-            const response = await fetch('/api/addBill',{
+            const response = await fetch('/api/sales/addBill',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ const CreateBill = () => {
                 console.log(postData);
 
                 try {
-                    const postResponse = await fetch('/api/addProductPurchased',{
+                    const postResponse = await fetch('/api/sales/addProductPurchased',{
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

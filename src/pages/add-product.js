@@ -13,7 +13,7 @@ const AddProduct = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/addProduct',{
+            const response = await fetch('/api/sales/addProduct',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

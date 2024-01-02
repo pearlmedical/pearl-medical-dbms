@@ -14,7 +14,7 @@ const SearchProduct = () => {
     const fetchAllProducts = async () => {
         try {
             // Your actual API call to fetch products
-            const response = await fetch('api/fetchAllProducts');
+            const response = await fetch('api/sales/fetchAllProducts');
             const data = await response.json();
             setProducts(data);
         } catch (error) {

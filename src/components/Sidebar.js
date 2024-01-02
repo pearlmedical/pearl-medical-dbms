@@ -13,7 +13,12 @@ const Sidebar = () => {
             <Navbar bg="light" expand="lg">
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav variant="pills" className="flex-column" activeKey={router.pathname}>
+                    <Nav
+                        variant="pills"
+                        className="flex-column"
+                        activeKey={router.pathname}
+                        style={{ fontSize: '0.8rem', gap: '0' }} // Adjust the font size and margin-top as needed
+                    >
                         <Nav.Link href="/search-product">Search Product</Nav.Link>
                         <Nav.Link href="/edit-product">Edit Product</Nav.Link>
                         <Nav.Link href="/delete-product">Delete Product</Nav.Link>
@@ -26,16 +31,13 @@ const Sidebar = () => {
                         <Nav.Link href="/create-bill">Create Bill</Nav.Link>
                         <Nav.Link href="/search-bill">Search Bill</Nav.Link>
                         <Nav.Link href="/search-user-by-productId">Search User By Product</Nav.Link>
-                        <Nav.Link href="/search-product-by-userId">Search Product By User</Nav.Link>
+                        <Nav.Link href="/search-product-by-userid">Search Product By User</Nav.Link>
                         <Nav.Link href="/search-bill-by-userid">Search Bill By User</Nav.Link>
-
                     </Nav>
                 </Navbar.Collapse>
-                
             </Navbar>
         </div>
     );
-    //ui
 };
 
 export default Sidebar;

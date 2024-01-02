@@ -11,4 +11,4 @@ const BIll_Customer = () => {
     );
 };
 
-export default BIll_Customerr;
+export default BIll_Customer;

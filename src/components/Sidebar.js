@@ -31,9 +31,11 @@ const Sidebar = () => {
 
                     </Nav>
                 </Navbar.Collapse>
+                
             </Navbar>
         </div>
     );
+    //ui
 };
 
 export default Sidebar;

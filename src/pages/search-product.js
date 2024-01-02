@@ -55,7 +55,7 @@ const SearchProduct = () => {
                         <tr>
                             <th onClick={() => handleSort('product_id')}>Product ID</th>
                             <th onClick={() => handleSort('product_name')}>Product Name</th>
-                            <th onClick={() => handleSort('cost')}>Cost</th>
+                            {/* <th onClick={() => handleSort('cost')}>Cost</th> */}
                             <th onClick={() => handleSort('remarks')}>Remarks</th>
                         </tr>
                     </thead>
@@ -64,7 +64,7 @@ const SearchProduct = () => {
                             <tr key={product.product_id} style={{ backgroundColor: index % 2 === 0 ? '#c7f49d' : '#ffffff' }}>
                                 <td>{product.product_id}</td>
                                 <td>{product.product_name}</td>
-                                <td>{product.cost}</td>
+                                {/* <td>{product.cost}</td> */}
                                 <td>{product.remarks}</td>
                             </tr>
                         ))}

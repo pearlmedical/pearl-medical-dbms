@@ -165,6 +165,29 @@ const CreateBill = () => {
         setSelectedProducts(updatedSelectedProducts);
     };
 
+    const handleQuantityChange = (index,event) => {
+        const newSelectedProducts = [...selectedProducts];
+        const newQuantity = parseInt(event.target.value,10);
+
+        if (!isNaN(newQuantity) && newQuantity >= 0) {
+            newSelectedProducts[index].quantity = newQuantity;
+            setSelectedProducts(newSelectedProducts);
+            updateTotalAmount();
+        }
+    };
+
+    const handleCostChange = (index,event) => {
+        const newSelectedProducts = [...selectedProducts];
+        const newCost = parseFloat(event.target.value);
+
+        if (!isNaN(newCost) && newCost >= 0) {
+            newSelectedProducts[index].cost = newCost;
+            setSelectedProducts(newSelectedProducts);
+            updateTotalAmount();
+        }
+    };
+
+
     const handleRemoveProduct = (product) => {
         // Remove the product from the list
         const updatedSelectedProducts = selectedProducts.filter(
@@ -228,13 +251,13 @@ const CreateBill = () => {
                     {/* Selected Products Table */}
                     <Col md={6}>
                         <h4>Selected Products</h4>
-                        <Table striped bordered hover style={{ maxHeight: '300px',minHeight: '300px',overflowY: 'auto' }}>
+                        <Table striped bordered hover style={{ maxHeight: '300px',minHeight: '300px',overflowY: 'auto', fontSize:'0.8rem' }}>
                             <thead>
                                 <tr>
-                                    <th style={{ width: '10%' }}>Prod. ID</th>
-                                    <th style={{ minWidth: '25%' }}>Prod. Name</th>
+                                    <th style={{ width: '15%' }}>Prod. ID</th>
+                                    <th style={{ width: '25%' }}>Prod. Name</th>
                                     <th style={{ minWidth: '20%' }}>Quantity</th>
-                                    <th style={{ minWidth: '12%' }}>Cost /-</th>
+                                    <th style={{ minWidth: '20%' }}>Cost /-</th>
                                     <th style={{ minWidth: '12%' }}>Total Price</th>
                                     <th style={{ minWidth: '1%' }}></th>
                                 </tr>
@@ -242,50 +265,34 @@ const CreateBill = () => {
                             <tbody>
                                 {selectedProducts.length === 0 ? (
                                     <tr>
-                                        <td colSpan="5" className="text-center">
+                                        <td colSpan="6" className="text-center">
                                             Table is empty
                                         </td>
                                     </tr>
                                 ) : (
-                                    selectedProducts.map((selectedProduct) => (
+                                    selectedProducts.map((selectedProduct,index) => (
                                         <tr key={selectedProduct.product_id}>
                                             <td>{selectedProduct.product_id}</td>
                                             <td>{selectedProduct.product_name}</td>
                                             <td>
-                                                <InputGroup>
-                                                    <Button
-                                                        variant="outline-secondary"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            handleDecreaseQuantity(selectedProduct);
-                                                            updateTotalAmount(); // Update total amount when quantity changes
-                                                        }}
-                                                    >
-                                                        -
-                                                    </Button>
-                                                    <FormControl
-                                                        type="number"
-                                                        value={selectedProduct.quantity}
-                                                        onChange={(e) => {
-                                                            handleProductAction(selectedProduct,e.target.value);
-                                                            updateTotalAmount();
-                                                        }}
-                                                        inputMode="none"
-                                                    />
-                                                    <Button
-                                                        variant="outline-secondary"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            handleIncreaseQuantity(selectedProduct);
-                                                            updateTotalAmount();
-                                                        }}
-                                                    >
-                                                        +
-                                                    </Button>
-                                                </InputGroup>
+                                                <FormControl
+                                                    type="number"
+                                                    step="1"
+                                                    value={selectedProduct.quantity}
+                                                    onChange={(e) => handleQuantityChange(index,e)}
+                                                    style={{ fontSize: '0.8rem' }}
+                                                />
                                             </td>
-                                            <td style={{ fontSize: '1rem' }} >{selectedProduct.cost.toFixed(3)}</td>
-                                            <td style={{ fontSize: '1rem' }}>{(selectedProduct.cost * selectedProduct.quantity).toFixed(3)}</td>
+                                            <td>
+                                                <FormControl
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={selectedProduct.cost}
+                                                    onChange={(e) => handleCostChange(index,e)}
+                                                    style={{ fontSize: '0.8rem' }}
+                                                />
+                                            </td>
+                                            <td>{(selectedProduct.cost * selectedProduct.quantity).toFixed(3)}</td>
                                             <td>
                                                 <Button variant='light' size="sm" style={{ fontSize: '0.8rem',margin: '0',padding: '0' }} onClick={() => handleRemoveProduct(selectedProduct)}>
                                                     ❌
@@ -301,6 +308,7 @@ const CreateBill = () => {
                         </Button>
                     </Col>
 
+
                     {/* All Products Table */}
                     <Col md={6}>
                         <h4>All Products</h4>
@@ -311,7 +319,7 @@ const CreateBill = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </InputGroup>
-                        <Table striped bordered hover style={{ maxHeight: '250px',minHeight: '250px',overflowY: 'auto' }}>
+                        <Table striped bordered hover style={{ maxHeight: '250px',minHeight: '250px',overflowY: 'auto', fontSize:'0.8rem' }}>
                             <thead>
                                 <tr>
                                     <th>Product ID</th>

@@ -13,11 +13,13 @@ export default async function handler(req, res) {
 
     // Create an array of objects to be inserted
     const rowsToInsert = products.map(({ product_id, quantity }) => ({
-      user_id,
+        user_id,
       bill_id,
       product_id,
       quantity,
     }));
+
+    console.log('Rows to Insert:', rowsToInsert);
 
     // Insert all rows into the products_purchased table
     const { data, error } = await supabase
@@ -25,13 +27,17 @@ export default async function handler(req, res) {
       .insert(rowsToInsert)
       .select();
 
+    console.log('Response Data:', data);
+    console.log('Error:', error);
+
     if (error) {
       throw error;
     }
+  
 
     return res.status(201).json(data);
   } catch (error) {
     console.error('Error adding product purchases:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: 'Internal Server Error', error });
   }
 }

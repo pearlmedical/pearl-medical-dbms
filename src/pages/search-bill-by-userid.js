@@ -6,25 +6,36 @@ import { BarLoader } from 'react-spinners';
 
 const SearchBillByUserId = () => {
     const [searchTerm,setSearchTerm] = useState('');
-    const [allBills,setAllBills] = useState([]);
+    const [allUsers,setAllUsers] = useState([]);
+    const [selectedUser,setSelectedUser] = useState(null);
+    const [bills,setBills] = useState([]);
     const [selectedBill,setSelectedBill] = useState(null);
-    const [billDetails,setBillDetails] = useState([]);
     const [loadingBills,setLoadingBills] = useState(false);
-    const [loadingBillDetails,setLoadingBillDetails] = useState(false);
     const [showBillDetailsModal,setShowBillDetailsModal] = useState(false);
 
-    useEffect(() => {
-        fetchAllBills();
-    },[]);
-
-    // Function to fetch all bills
-    const fetchAllBills = async () => {
-        setLoadingBills(true);
+    // Function to fetch all users
+    const fetchAllUsers = async () => {
         try {
-            const response = await fetch('/api/fetchAllBills');
+            const response = await fetch('/api/fetchExistingUser');
             if (response.ok) {
                 const data = await response.json();
-                setAllBills(data);
+                setAllUsers(data);
+            } else {
+                console.error('Error fetching users:',response.status,response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching users:',error);
+        }
+    };
+
+    // Function to fetch bills based on selected user
+    const fetchBills = async (userId) => {
+        setLoadingBills(true);
+        try {
+            const response = await fetch(`/api/fetchParticularUserBills?userId=${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setBills(data);
             } else {
                 console.error('Error fetching bills:',response.status,response.statusText);
             }
@@ -35,27 +46,29 @@ const SearchBillByUserId = () => {
         }
     };
 
-    // Function to fetch bill details based on selected bill
+    // Function to fetch details of a bill
     const fetchBillDetails = async (billId) => {
-        setLoadingBillDetails(true);
         try {
             const response = await fetch(`/api/fetchBillDetailsFromBill_Id?billId=${billId}`);
             if (response.ok) {
                 const data = await response.json();
-                setBillDetails(data);
+                setSelectedBill(data);
             } else {
                 console.error('Error fetching bill details:',response.status,response.statusText);
             }
         } catch (error) {
             console.error('Error fetching bill details:',error);
-        } finally {
-            setLoadingBillDetails(false);
         }
+    };
+
+    // Function to handle double click on user row
+    const handleUserRowDoubleClick = (user) => {
+        setSelectedUser(user);
+        fetchBills(user.user_id);
     };
 
     // Function to handle double click on bill row
     const handleBillRowDoubleClick = (bill) => {
-        setSelectedBill(bill);
         fetchBillDetails(bill.bill_id);
         setShowBillDetailsModal(true);
     };
@@ -65,74 +78,73 @@ const SearchBillByUserId = () => {
         setShowBillDetailsModal(false);
     };
 
+    // Fetch all users on component mount
+    useEffect(() => {
+        fetchAllUsers();
+    },[]);
+
     return (
         <div>
-            <h1>Search Bill by User ID</h1>
+            <h1>Search Bill By User ID</h1>
 
-            {/* Search and All Bills Table */}
+            {/* Search and All Users Table */}
             <div style={{ display: 'flex' }}>
                 <div style={{ flex: 1 }}>
                     <InputGroup className="mb-3">
                         <FormControl
-                            placeholder="Search by User ID"
+                            placeholder="Search Users"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </InputGroup>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allUsers
+                                .filter(
+                                    (user) =>
+                                        user.user_id.toString().includes(searchTerm) ||
+                                        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+                                )
+                                .map((user) => (
+                                    <tr key={user.user_id} onDoubleClick={() => handleUserRowDoubleClick(user)}>
+                                        <td>{user.user_id}</td>
+                                        <td>{user.name}</td>
+                                        <td>{user.phone_number}</td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </Table>
+                </div>
+
+                {/* Bills Table */}
+                <div style={{ flex: 1 }}>
+                    <h4>Corresponding Bills</h4>
                     {loadingBills ? (
                         <div className="text-center">
                             <BarLoader color="#17a2b8" loading={loadingBills} />
                         </div>
                     ) : (
-                        <Table striped bordered hover style={{ height: '300px',overflowY: 'auto' }}>
+                        <Table striped bordered hover>
                             <thead>
                                 <tr>
                                     <th>Bill ID</th>
-                                    <th>User ID</th>
                                     <th>Date of Sale</th>
-                                    <th>Total Amount</th>
+                                    <th>Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {allBills
-                                    .filter((bill) => String(bill.user_id).includes(searchTerm))
-                                    .map((bill) => (
-                                        <tr key={bill.bill_id} onDoubleClick={() => handleBillRowDoubleClick(bill)}>
-                                            <td>{bill.bill_id}</td>
-                                            <td>{bill.user_id}</td>
-                                            <td>{bill.date_of_sale}</td>
-                                            <td>{bill.total_amount}</td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </Table>
-                    )}
-                </div>
-
-                {/* Bill Details Table */}
-                <div style={{ flex: 1 }}>
-                    <h4>Bill Details</h4>
-                    {loadingBillDetails ? (
-                        <div className="text-center">
-                            <BarLoader color="#17a2b8" loading={loadingBillDetails} />
-                        </div>
-                    ) : (
-                        <Table striped bordered hover style={{ height: '350px',overflowY: 'auto' }}>
-                            <thead>
-                                <tr>
-                                    <th>Product ID</th>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {billDetails.map((billDetail) => (
-                                    <tr key={billDetail.product_id}>
-                                        <td>{billDetail.product_id}</td>
-                                        <td>{billDetail.product_name}</td>
-                                        <td>{billDetail.quantity}</td>
-                                        <td>{billDetail.cost}</td>
+                                {bills.map((bill) => (
+                                    <tr key={bill.bill_id} onDoubleClick={() => handleBillRowDoubleClick(bill)}>
+                                        <td>{bill.bill_id}</td>
+                                        <td>{bill.date_of_sale}</td>
+                                        <td>{bill.remarks}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -147,11 +159,38 @@ const SearchBillByUserId = () => {
                     <Modal.Title>Bill Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Bill ID: {selectedBill?.bill_id}</p>
-                    <p>User ID: {selectedBill?.user_id}</p>
-                    <p>Date of Sale: {selectedBill?.date_of_sale}</p>
-                    <p>Total Amount: {selectedBill?.total_amount}</p>
-                    {/* Add other details as needed */}
+                    {selectedBill && (
+                        <div>
+                            <p>User ID: {selectedBill.userData.user_id}</p>
+                            <p>Name: {selectedBill.userData.name}</p>
+                            <p>Address: {selectedBill.userData.address}</p>
+                            <p>Organization Name: {selectedBill.userData.organization_name}</p>
+                            <p>Phone Number: {selectedBill.userData.phone_number}</p>
+                            <p>Email ID: {selectedBill.userData.email_id}</p>
+
+                            <h5>Product Purchases:</h5>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Purchase ID</th>
+                                        <th>Product ID</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedBill.productPurchases.map((purchase) => (
+                                        <tr key={purchase.purchase_id}>
+                                            <td>{purchase.purchase_id}</td>
+                                            <td>{purchase.product_id}</td>
+                                            <td>{purchase.quantity}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+
+                            <p>Total Amount: {selectedBill.totalAmount}</p>
+                        </div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseBillDetailsModal}>

@@ -15,6 +15,8 @@
     "react": "^18",
     "react-bootstrap": "^2.9.2",
     "react-datepicker": "^4.25.0",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-spinners": "^0.13.8",
+    "react-top-loading-bar": "^2.3.1"
   }
 }

@@ -1,20 +1,21 @@
-import React,{ useState } from 'react';
-import { Form,Button,Row,Col,Alert } from 'react-bootstrap';
+// pages/create-user.js
+import React, { useState } from 'react';
+import { Form, Button, Row, Col, Alert } from 'react-bootstrap';
 
 const CreateCustomer = () => {
-    const [name,setName] = useState('');
-    const [address,setAddress] = useState('');
-    const [organizationName,setOrganizationName] = useState('');
-    const [phoneNumber,setPhoneNumber] = useState('');
-    const [emailId,setEmailId] = useState('');
-    const [successMessage,setSuccessMessage] = useState('');
-    const [errorMessage,setErrorMessage] = useState('');
+    const [name, setName] = useState('');
+    const [address, setAddress] = useState('');
+    const [organizationName, setOrganizationName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [emailId, setEmailId] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/potentialCustomers/addNewCustomer',{
+            const response = await fetch('/api/potentialCustomers/addNewCustomer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -30,15 +31,15 @@ const CreateCustomer = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setSuccessMessage("Customer created successfully with ID: ${ data.customer_id; }");
+                setSuccessMessage(`User created successfully with ID: ${data.customer_id}`);
                 setErrorMessage('');
             } else {
                 const errorData = await response.json();
                 setSuccessMessage('');
-                setErrorMessage(`Error: '${ errorData.message }'`);
+                setErrorMessage(`Error: ${errorData.message}`);
             }
         } catch (error) {
-            console.error('Error creating user:',error);
+            console.error('Error creating Customer:', error);
             setSuccessMessage('');
             setErrorMessage('Internal Server Error');
         }
@@ -46,7 +47,7 @@ const CreateCustomer = () => {
 
     return (
         <div>
-            <h2>Create Customer</h2>
+            <h2>Create User</h2>
 
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
@@ -104,27 +105,27 @@ const CreateCustomer = () => {
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={6}>
-                        <Form.Group controlId="address">
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                placeholder="Enter address"
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
+                <Col md={6}>
+                    <Form.Group controlId="address">
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Enter address"
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
                 <div className="sp" >
-
+                    
                 </div>
                 <div className="mb-3">
-
-                    <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
-                        Submit
-                    </Button>
-
+                  
+                <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
+                    Submit
+                </Button>
+             
                 </div>
             </Form>
         </div>

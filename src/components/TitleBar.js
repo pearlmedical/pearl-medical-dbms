@@ -10,7 +10,7 @@ const TitleBar = () => {
         <>
             <Navbar bg="primary" data-bs-theme="dark">
                 <Container>
-                    <Navbar.Brand href="#home">
+                    <Navbar.Brand href="/">
                         <div style={{ display: 'flex', alignItems: 'flex-start', color: 'white', padding: '0rem', textAlign: 'center' }}>
                             <img
                                 alt=""

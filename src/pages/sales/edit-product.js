@@ -1,27 +1,27 @@
 // pages/search-products.js
 
-import React, { useState, useEffect } from 'react';
-import { Table, Form, Modal, Button } from 'react-bootstrap';
+import React,{ useState,useEffect } from 'react';
+import { Table,Form,Modal,Button } from 'react-bootstrap';
 
 const EditProduct = () => {
-  const [products, setProducts] = useState([
-    { product_id: 1, product_name: 'Product 1', cost: 10.99, remarks: 'Sample remarks' }
+  const [products,setProducts] = useState([
+    { product_id: 1,product_name: 'Product 1',cost: 10.99,remarks: 'Sample remarks' }
   ]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortedField, setSortedField] = useState('product_id');
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [searchTerm,setSearchTerm] = useState('');
+  const [sortedField,setSortedField] = useState('product_id');
+  const [sortOrder,setSortOrder] = useState('asc');
+  const [editingProduct,setEditingProduct] = useState(null);
+  const [showModal,setShowModal] = useState(false);
 
   useEffect(() => {
     // Fetch products from the API or your database here
     const fetchData = async () => {
-      const response = await fetch('api/sales/fetchAllProducts');
+      const response = await fetch('api/fetchAllProducts');
       const data = await response.json();
       setProducts(data);
     };
     fetchData();
-  }, []);
+  },[]);
 
   const handleSort = (field) => {
     setSortedField(field);
@@ -35,7 +35,7 @@ const EditProduct = () => {
 
   const handleUpdate = async (updatedProduct) => {
     try {
-      const response = await fetch('/api/sales/updateProduct', {
+      const response = await fetch('/api/updateProduct',{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -51,11 +51,11 @@ const EditProduct = () => {
         setShowModal(false);
       } else {
         const errorData = await response.json();
-        console.error('Error updating product:', errorData);
+        console.error('Error updating product:',errorData);
         // Handle error scenarios as needed
       }
     } catch (error) {
-      console.error('Error updating product:', error);
+      console.error('Error updating product:',error);
       // Handle error scenarios as needed
     }
   };
@@ -82,12 +82,12 @@ const EditProduct = () => {
           <tr>
             <th onClick={() => handleSort('product_id')}>Product ID</th>
             <th onClick={() => handleSort('product_name')}>Product Name</th>
-            <th onClick={() => handleSort('cost')}>Cost</th>
+            {/* <th onClick={() => handleSort('cost')}>Cost</th> */}
             <th onClick={() => handleSort('remarks')}>Remarks</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
+          {products.map((product,index) => (
             <tr
               key={product.product_id}
               style={{ backgroundColor: index % 2 === 0 ? '#c7f49d' : '#ffffff' }}
@@ -95,7 +95,7 @@ const EditProduct = () => {
             >
               <td>{product.product_id}</td>
               <td>{product.product_name}</td>
-              <td>{product.cost}</td>
+              {/* <td>{product.cost}</td> */}
               <td>{product.remarks}</td>
             </tr>
           ))}
@@ -115,7 +115,7 @@ const EditProduct = () => {
                 type="text"
                 placeholder="Enter product name"
                 value={editingProduct?.product_name || ''}
-                onChange={(e) => setEditingProduct({ ...editingProduct, product_name: e.target.value })}
+                onChange={(e) => setEditingProduct({ ...editingProduct,product_name: e.target.value })}
               />
             </Form.Group>
             <Form.Group controlId="formCost">
@@ -124,7 +124,7 @@ const EditProduct = () => {
                 type="number"
                 placeholder="Enter cost"
                 value={editingProduct?.cost || ''}
-                onChange={(e) => setEditingProduct({ ...editingProduct, cost: e.target.value })}
+                onChange={(e) => setEditingProduct({ ...editingProduct,cost: e.target.value })}
               />
             </Form.Group>
             <Form.Group controlId="formRemarks">
@@ -133,7 +133,7 @@ const EditProduct = () => {
                 type="text"
                 placeholder="Enter remarks"
                 value={editingProduct?.remarks || ''}
-                onChange={(e) => setEditingProduct({ ...editingProduct, remarks: e.target.value })}
+                onChange={(e) => setEditingProduct({ ...editingProduct,remarks: e.target.value })}
               />
             </Form.Group>
           </Form>

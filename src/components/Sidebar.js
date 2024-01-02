@@ -26,7 +26,7 @@ const Sidebar = () => {
                         <Nav.Link href="/create-bill">Create Bill</Nav.Link>
                         <Nav.Link href="/search-bill">Search Bill</Nav.Link>
                         <Nav.Link href="/search-user-by-productId">Search User By Product</Nav.Link>
-                        <Nav.Link href="/search-product-by-userId">Search Product By User</Nav.Link>
+                        <Nav.Link href="/search-product-by-userid">Search Product By User</Nav.Link>
                         <Nav.Link href="/search-bill-by-userid">Search Bill By User</Nav.Link>
 
                     </Nav>

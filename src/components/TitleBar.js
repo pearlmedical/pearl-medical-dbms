@@ -29,10 +29,10 @@ const TitleBar = () => {
                             <Nav.Link href="/">Home</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link href="/search-product">Sales</Nav.Link>
+                            <Nav.Link href="/sales">Sales</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link href="/search-product">Enquiry</Nav.Link>
+                            <Nav.Link href="/enquiries">Enquiries</Nav.Link>
                         </Nav.Item>
                         </Nav>
                     </Navbar.Collapse>

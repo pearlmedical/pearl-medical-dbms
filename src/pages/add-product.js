@@ -1,20 +1,19 @@
-// pages/add-product.js
-import React, { useState } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
+import React,{ useState } from 'react';
+import { Form,Button,Alert,Row,Col } from 'react-bootstrap';
 
 const AddProduct = () => {
-    const [productName, setProductName] = useState('');
-    const [cost, setCost] = useState('');
-    const [remarks, setRemarks] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [productName,setProductName] = useState('');
+    const [cost,setCost] = useState(0);
+    const [remarks,setRemarks] = useState('');
+    const [quantity,setQuantity] = useState(0);
+    const [successMessage,setSuccessMessage] = useState('');
+    const [errorMessage,setErrorMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/addProduct', {
+            const response = await fetch('/api/addProduct',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +36,7 @@ const AddProduct = () => {
                 setErrorMessage(`Error: ${errorData.message}`);
             }
         } catch (error) {
-            console.error('Error adding product:', error);
+            console.error('Error adding product:',error);
             setSuccessMessage('');
             setErrorMessage('Internal Server Error');
         }
@@ -51,45 +50,33 @@ const AddProduct = () => {
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
             <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="productName">
-                    <Form.Label>Product Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                        placeholder="Enter product name"
-                        required
-                    />
-                </Form.Group>
-                <Form.Group controlId="cost">
-                    <Form.Label>Cost</Form.Label>
-                    <Form.Control
-                        type="number"
-                        value={cost}
-                        onChange={(e) => setCost(e.target.value)}
-                        placeholder="Enter cost"
-                        required
-                    />
-                </Form.Group>
-                <Form.Group controlId="remarks">
-                    <Form.Label>Remarks</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={remarks}
-                        onChange={(e) => setRemarks(e.target.value)}
-                        placeholder="Enter remarks"
-                    />
-                </Form.Group>
-                <Form.Group controlId="quantity">
-                    <Form.Label>Quantity</Form.Label>
-                    <Form.Control
-                        type="number"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                        placeholder="Enter quantity"
-                        required
-                    />
-                </Form.Group>
+                <Row>
+                    <Col>
+                        <Form.Group controlId="productName">
+                            <Form.Label>Product Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={productName}
+                                onChange={(e) => setProductName(e.target.value)}
+                                placeholder="Enter product name"
+                                required
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Form.Group controlId="remarks">
+                            <Form.Label>Remarks</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                                placeholder="Enter remarks"
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
                 <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
                     Submit
                 </Button>

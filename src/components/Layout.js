@@ -1,11 +1,20 @@
 // components/Layout.js
-
 import React from 'react';
-import Sidebar from "./Sidebar";
+import Sidebar from './Sidebar';
 import TitleBar from './TitleBar';
 import StatusBar from './StatusBar';
+import { useAuth } from '@/context/AuthContext';
+import LoginPage from '@/pages/login';
 
 const Layout = ({ children }) => {
+    const { isLoggedIn } = useAuth();
+
+    if (!isLoggedIn) {
+        // Redirect to login page if not logged in
+        return <LoginPage />;
+        // return null;
+    }
+
     return (
         <div style={{ display: 'flex',flexDirection: 'column',minHeight: '100vh' }}>
             <TitleBar />

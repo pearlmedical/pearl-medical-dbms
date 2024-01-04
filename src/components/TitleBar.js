@@ -16,7 +16,7 @@ const TitleBar = () => {
                         <div style={{ display: 'flex',alignItems: 'flex-start',color: 'white',padding: '0rem',textAlign: 'center' }}>
                             <img
                                 alt=""
-                                src="/OIG-removebg-preview.png"
+                                src="/Graphic2.jpg"
                                 width="50"
                                 height="50"
                                 className="d-inline-block align-top"

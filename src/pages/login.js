@@ -11,24 +11,36 @@ const LoginPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        // Redirect to home if user is already logged in
+        // Redirect to home if the user is already logged in
         if (isLoggedIn) {
             router.push('/');
         }
     },[isLoggedIn,router]);
 
-    const handleLogin = () => {
-        // Perform authentication logic here
-        // For simplicity, let's assume some predefined admin and employee login details
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('/api/employee/login-employee',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    employee_id: loginId,
+                    password: password,
+                }),
+            });
 
-        if (loginId === 'admin' && password === 'admin') {
-            login('admin');
-            router.push('/');
-        } else if (loginId === 'employee' && password === 'employee') {
-            login('employee');
-            router.push('/');
-        } else {
-            setError('Invalid login credentials');
+            if (response.ok) {
+                const data = await response.json();
+                login(data.employee_id);
+                router.push('/');
+            } else {
+                const errorData = await response.json();
+                setError(errorData.message || 'Invalid login credentials');
+            }
+        } catch (error) {
+            console.error('Error during login:',error);
+            setError('Internal Server Error');
         }
     };
 

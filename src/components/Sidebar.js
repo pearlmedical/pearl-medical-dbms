@@ -46,6 +46,7 @@ const Sidebar = () => {
                                 <Nav.Link href="/enquiries/create-new-enquiry">Create New Enquiry</Nav.Link>
                                 <Nav.Link href="/enquiries/search-interests">Search Interests</Nav.Link>
                                 <Nav.Link href="/enquiries/search-enquiries">Search Enquiry</Nav.Link>
+                                <Nav.Link href="/enquiries/create-quotation">Create Quotation</Nav.Link>
                             </>
                         )}
                     </Nav>

@@ -97,11 +97,11 @@ const CreateQuotation = () => {
       if (addQuotationResponse.ok) {
         // Step 2: Call the add-quotation-pricing API
         const addQuotationData = await addQuotationResponse.json();
-        console.log(quotedProducts.map((quotedProduct) => ({
-          product_id: quotedProduct.products.product_id,
-          price_tie: quotedProduct.cost,
-          quantity: quotedProduct.quantity,
-        })));
+        // console.log(quotedProducts.map((quotedProduct) => ({
+        //   product_id: quotedProduct.products.product_id,
+        //   price_tie: quotedProduct.cost,
+        //   quantity: quotedProduct.quantity,
+        // })));
         const addQuotationPricingResponse = await fetch('/api/potentialCustomers/add-quotation-pricing',{
           method: 'POST',
           headers: {

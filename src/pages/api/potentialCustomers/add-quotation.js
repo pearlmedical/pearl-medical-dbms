@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
 //   const { customer_id, employee_id,date, enquiry_id } = req.body;
-const { customer_id, date, enquiry_id } = req.body;
+const { customer_id, date, enquiry_id,remarks } = req.body;
   try {
     // Validate the request body here if needed
 const employee_id=100000;
@@ -20,7 +20,7 @@ const employee_id=100000;
         customer_id,
           date,
           enquiry_id,
-       
+       remarks
         },
       ])
       .select();

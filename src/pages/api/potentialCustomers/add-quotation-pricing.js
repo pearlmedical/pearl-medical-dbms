@@ -8,6 +8,7 @@ export default async function handler(req, res) {
 
   const { customer_id,enquiry_id,  products } = req.body;
 
+  console.log('Request Body:', req.body);
   try {
     // Validate the request body here if needed
 

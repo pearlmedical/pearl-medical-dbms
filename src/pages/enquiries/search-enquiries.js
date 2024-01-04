@@ -96,32 +96,58 @@ const SearchEnquiries = () => {
       )}
 
       {/* Modal to display enquiry details */}
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Enquiry Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedEnquiry &&
-            selectedEnquiry.map((item, idx) => (
-              <div key={idx}>
-                <p>Enquiry ID: {item.enquiry_id}</p>
-                <p>Quantity: {item.quantity}</p>
-                <p>Product ID: {item.products.product_id}</p>
-                <p>Product Name: {item.products.product_name}</p>
-                <p>Customer ID: {item.potential_customers.customer_id}</p>
-                <p>Customer Name: {item.potential_customers.name}</p>
-                <p>Phone Number: {item.potential_customers.phone_number}</p>
-                <hr />
-              </div>
-            ))}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <EnquiryDetailsModal
+        selectedEnquiry={selectedEnquiry}
+        showModal={showModal}
+        handleCloseModal={handleCloseModal}
+      />
+
     </div>
+  );
+};
+
+const EnquiryDetailsModal = ({ selectedEnquiry,showModal,handleCloseModal }) => {
+  if (!selectedEnquiry || selectedEnquiry.length === 0) {
+    return null;
+  }
+
+  const { enquiry_id,potential_customers } = selectedEnquiry[0];
+
+  return (
+    <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>Enquiry Details</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Enquiry ID: {enquiry_id}</p>
+        <p>Customer ID: {potential_customers.customer_id}</p>
+        <p>Customer Name: {potential_customers.name}</p>
+
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Quantity</th>
+              <th>Product ID</th>
+              <th>Product Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedEnquiry.map((enquiry,index) => (
+              <tr key={index}>
+                <td>{enquiry.quantity}</td>
+                <td>{enquiry.products.product_id}</td>
+                <td>{enquiry.products.product_name}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleCloseModal}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

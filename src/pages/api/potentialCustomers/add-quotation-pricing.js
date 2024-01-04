@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { customer_id,enquiry_id,  products } = req.body;
+  const { customer_id,enquiry_id,  products,quotation_id } = req.body;
 
   console.log('Request Body:', req.body);
   try {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       product_id,
       price_tie,
       quantity,
-
+      quotation_id
     
     }));
 

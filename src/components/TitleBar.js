@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import { useAuth } from '@/context/AuthContext';
 
 const TitleBar = () => {
-    const { isLoggedIn,logout } = useAuth();
+    const { logout } = useAuth();
 
     return (
         <>
@@ -36,13 +36,11 @@ const TitleBar = () => {
                             <Nav.Item>
                                 <Nav.Link href="/enquiries">Enquiries</Nav.Link>
                             </Nav.Item>
-                            {isLoggedIn && (
-                                <Nav.Item>
-                                    <Nav.Link onClick={logout} style={{ cursor: 'pointer' }}>
-                                        Logout
-                                    </Nav.Link>
-                                </Nav.Item>
-                            )}
+                            <Nav.Item>
+                                <Nav.Link onClick={logout} style={{ cursor: 'pointer' }}>
+                                    Logout
+                                </Nav.Link>
+                            </Nav.Item>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

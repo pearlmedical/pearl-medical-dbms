@@ -1,7 +1,7 @@
-// pages/login.js
 import { useEffect,useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
+import { Form,Button,Container,Row,Col,Alert } from 'react-bootstrap';
 
 const LoginPage = () => {
     const [loginId,setLoginId] = useState('');
@@ -33,21 +33,40 @@ const LoginPage = () => {
     };
 
     return (
-        <div>
-            <h2>Login Page</h2>
-            <label>
-                Login ID:
-                <input type="text" value={loginId} onChange={(e) => setLoginId(e.target.value)} />
-            </label>
-            <br />
-            <label>
-                Password:
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </label>
-            <br />
-            <button onClick={handleLogin}>Login</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
+        <Container className="mt-5">
+            <Row className="justify-content-md-center">
+                <Col md={6}>
+                    <h2 className="mb-4">Login Page</h2>
+                    <Form>
+                        <Form.Group controlId="loginId">
+                            <Form.Label>Login ID:</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter your login ID"
+                                value={loginId}
+                                onChange={(e) => setLoginId(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="password">
+                            <Form.Label>Password:</Form.Label>
+                            <Form.Control
+                                type="password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Button variant="primary" onClick={handleLogin}>
+                            Login
+                        </Button>
+
+                        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                    </Form>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

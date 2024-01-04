@@ -5,14 +5,14 @@ import Layout from '@/components/Layout';
 import { Table,Form } from 'react-bootstrap';
 
 const SearchProduct = () => {
-    const [products,setProducts] = useState([{ product_id: 1,product_name: 'Product 1',cost: 100,remarks: 'Remarks 1'}]);
+    const [products,setProducts] = useState([{ product_id: 1,product_name: 'Product 1',cost: 100,remarks: 'Remarks 1' }]);
     const [searchTerm,setSearchTerm] = useState('');
     const [sortedField,setSortedField] = useState('product_id');
     const [sortOrder,setSortOrder] = useState('asc');
 
     // Dummy API response (replace this with your actual API call)
     const fetchAllProducts = async () => {
-          try {
+        try {
             const response = await fetch('/api/sales/fetchAllProducts');
             if (response.ok) {
                 const data = await response.json();
@@ -51,7 +51,7 @@ const SearchProduct = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </Form.Group>
-            <hr/>
+            <hr />
             {filteredProducts.length > 0 ? (
                 <Table striped bordered hover>
                     <thead>

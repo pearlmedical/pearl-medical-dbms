@@ -18,7 +18,7 @@ const Sidebar = () => {
                         variant="pills"
                         className="flex-column"
                         activeKey={router.pathname}
-                        style={{ fontSize: '0.8rem',gap: '0' }} // Adjust the font size and margin-top as needed
+                        style={{ fontSize: '1rem',gap: '0' }} // Adjust the font size and margin-top as needed
                     >
                         {currentRoute.includes('sales') && (
                             <>
@@ -43,6 +43,9 @@ const Sidebar = () => {
                         {currentRoute.includes('enquiries') && (
                             <>
                                 <Nav.Link href="/enquiries/create-new-customer">Create New Customer</Nav.Link>
+                                <Nav.Link href="/enquiries/create-new-enquiry">Create New Enquiry</Nav.Link>
+                                <Nav.Link href="/enquiries/search-interests">Search Interests</Nav.Link>
+                                <Nav.Link href="/enquiries/search-enquiries">Search Enquiry</Nav.Link>
                             </>
                         )}
                     </Nav>

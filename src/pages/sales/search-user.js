@@ -13,17 +13,25 @@ const SearchUser = () => {
     const [sortOrder, setSortOrder] = useState('asc');
 
     // Dummy API response (replace this with your actual API call)
-    const fetchAllUsers = async () => {
-        try {
-            // Your actual API call to fetch users
-            const response = await fetch('api/sales/fetchExistingUser');
-            const data = await response.json();
-            console.log(data);
-            setUsers(data);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        }
-    };
+ 
+
+        const fetchAllUsers = async () => {
+            try {
+              const response = await fetch('/api/sales/fetchExistingUser');
+              if (response.ok) {
+                  const data = await response.json();
+                  setUsers(data);
+              } else {
+                  console.error('Error fetching products:',response.status,response.statusText);
+              }
+          } catch (error) {
+              console.error('Error fetching products:',error);
+          }
+      };
+
+
+
+
 
     useEffect(() => {
         fetchAllUsers();

@@ -15,11 +15,20 @@ const EditUser = () => {
 
     useEffect(() => {
         // Fetch users from the API or your database here
-        const fetchData = async () => {
-          const response = await fetch('api/sales/fetchExistingUser');
-          const data = await response.json();
-          setUsers(data);
-        };
+      const fetchData = async () => {
+            try {
+              const response = await fetch('/api/sales/fetchExistingUser');
+              if (response.ok) {
+                  const data = await response.json();
+                  setUsers(data);
+              } else {
+                  console.error('Error fetching products:',response.status,response.statusText);
+              }
+          } catch (error) {
+              console.error('Error fetching products:',error);
+          }
+      };
+
         fetchData();
     }, []);
 

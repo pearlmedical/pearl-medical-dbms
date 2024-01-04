@@ -16,10 +16,18 @@ const EditProduct = () => {
   useEffect(() => {
     // Fetch products from the API or your database here
     const fetchData = async () => {
-      const response = await fetch('api/fetchAllProducts');
-      const data = await response.json();
-      setProducts(data);
-    };
+      try {
+        const response = await fetch('/api/sales/fetchAllProducts');
+        if (response.ok) {
+            const data = await response.json();
+            setProducts(data);
+        } else {
+            console.error('Error fetching products:',response.status,response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching products:',error);
+    }
+};
     fetchData();
   },[]);
 
@@ -35,7 +43,7 @@ const EditProduct = () => {
 
   const handleUpdate = async (updatedProduct) => {
     try {
-      const response = await fetch('/api/updateProduct',{
+      const response = await fetch('/api/sales/updateProduct',{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

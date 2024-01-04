@@ -12,11 +12,14 @@ const SearchProduct = () => {
 
     // Dummy API response (replace this with your actual API call)
     const fetchAllProducts = async () => {
-        try {
-            // Your actual API call to fetch products
-            const response = await fetch('api/sales/fetchAllProducts');
-            const data = await response.json();
-            setProducts(data);
+          try {
+            const response = await fetch('/api/sales/fetchAllProducts');
+            if (response.ok) {
+                const data = await response.json();
+                setProducts(data);
+            } else {
+                console.error('Error fetching products:',response.status,response.statusText);
+            }
         } catch (error) {
             console.error('Error fetching products:',error);
         }

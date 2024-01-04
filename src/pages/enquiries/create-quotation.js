@@ -13,6 +13,7 @@ const CreateQuotation = () => {
   const [quotedProducts,setQuotedProducts] = useState([]);
   const [selectedEnquiryDetails,setSelectedEnquiryDetails] = useState(null);
   const [totalAmount,setTotalAmount] = useState(0);
+  const [searchTerm,setSearchTerm] = useState('');
 
   const fetchEnquiries = async () => {
     try {
@@ -37,11 +38,12 @@ const CreateQuotation = () => {
       const response = await fetch(`/api/potentialCustomers/fetch-enquiry-details?enquiryId=${enquiryId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setSelectedEnquiryDetails({
           enquiry_id: data[0].enquiry_id,
           customer_name: data[0].potential_customers.name,
           customer_id: data[0].potential_customers.customer_id,
-          date: data[0].date_of_enquiry,
+          // date: data[0].date_of_enquiry,
         });
         setQuotedProducts(data);
       } else {
@@ -89,15 +91,20 @@ const CreateQuotation = () => {
         },
         body: JSON.stringify({
           customer_id: selectedEnquiryDetails.customer_id,
-          date: selectedEnquiryDetails.date,
+          date: date,
           enquiry_id: selectedEnquiryDetails.enquiry_id,
+          remarks: remarks,
         }),
       });
 
       if (addQuotationResponse.ok) {
         // Step 2: Call the add-quotation-pricing API
         const addQuotationData = await addQuotationResponse.json();
-     
+        // console.log(quotedProducts.map((quotedProduct) => ({
+        //   product_id: quotedProduct.products.product_id,
+        //   price_tie: quotedProduct.cost,
+        //   quantity: quotedProduct.quantity,
+        // })));
         const addQuotationPricingResponse = await fetch('/api/potentialCustomers/add-quotation-pricing',{
           method: 'POST',
           headers: {
@@ -111,12 +118,16 @@ const CreateQuotation = () => {
               price_tie: quotedProduct.cost,
               quantity: quotedProduct.quantity,
             })),
+            quotation_id: addQuotationData.quotation_id,
           }),
         });
 
         if (addQuotationPricingResponse.ok) {
           // Both APIs were successful
-          setSuccessMessage(`Quotation created successfully with ID: ${addQuotationData.enquiry_id}`);
+          setSuccessMessage(`Quotation created successfully with ID: ${addQuotationData.quotation_id}`);
+          setTimeout(() => {
+            setSuccessMessage('');
+          }, 3000);
         } else {
           // Error in add-quotation-pricing API
           const errorData = await addQuotationPricingResponse.json();
@@ -128,48 +139,15 @@ const CreateQuotation = () => {
       console.error('Unexpected Error in handleSubmit:',error);
       setSuccessMessage('');
     }
-    //   if (!addQuotationResponse.ok) {
-    //     const errorData = await addQuotationResponse.json();
-    //     setSuccessMessage('');
-    //     setErrorMessage(`Error: ${errorData.message}`);
-    //     return;
-    //   }
-
-    //   const addQuotationData = await addQuotationResponse.json();
-
-    //   // Step 2: Call the add-quotation-pricing API
-    //   const addQuotationPricingResponse = await fetch('/api/potentialCustomers/add-quotation-pricing',{
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       customer_id: selectedEnquiryDetails.customer_id,
-    //       enquiry_id: addQuotationData.enquiry_id,
-    //       products: quotedProducts.map((quotedProduct) => ({
-    //         product_id: quotedProduct.products.product_id,
-    //         price_tie: quotedProduct.cost,
-    //         quantity: quotedProduct.quantity,
-    //       })),
-    //     }),
-    //   });
-
-    //   if (addQuotationPricingResponse.ok) {
-    //     // Both APIs were successful
-    //     setSuccessMessage(`Quotation created successfully with ID: ${addQuotationData.enquiry_id}`);
-    //   } else {
-    //     // Error in add-quotation-pricing API
-    //     const errorData = await addQuotationPricingResponse.json();
-    //     setSuccessMessage('');
-    //     setErrorMessage(`Error: ${errorData.message}`);
-    //   }
-    // } catch (error) {
-    //   console.error('Unexpected Error in handleSubmit:',error);
-    //   setSuccessMessage('');
-    //   setErrorMessage('Internal Server Error');
-    // }
   };
 
+  const filteredEnquiries = allEnquiries?.filter(
+    (enquiry) =>
+      enquiry.enquiry_id.toString().includes(searchTerm) ||
+      enquiry.remarks.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      enquiry.date_of_enquiry.toString().includes(searchTerm) ||
+      enquiry.potential_customers.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -179,21 +157,50 @@ const CreateQuotation = () => {
       {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
       <Form onSubmit={handleSubmit}>
+
+        <Form.Group controlId="searchForm">
+          <Form.Control
+            type="text"
+            placeholder="Search enquiry by Enquiry ID, Remarks, Date of Enquiry, or Customer Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Form.Group>
+
+        {filteredEnquiries.length > 0 ? (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Enquiry ID</th>
+                <th>Remarks</th>
+                <th>Date of Enquiry</th>
+                <th>Customer Name</th>
+                <th>Customer ID</th>
+                <th>Phone Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEnquiries?.map((enquiry,index) => (
+                <tr
+                  key={enquiry.enquiry_id}
+                  style={{ backgroundColor: index % 2 === 0 ? '#c7f49d' : '#ffffff' }}
+                  onDoubleClick={() => handleRowDoubleClick(enquiry.enquiry_id)}
+                >
+                  <td>{enquiry.enquiry_id}</td>
+                  <td>{enquiry.remarks}</td>
+                  <td>{enquiry.date_of_enquiry}</td>
+                  <td>{enquiry.potential_customers.name}</td>
+                  <td>{enquiry.potential_customers.customer_id}</td>
+                  <td>{enquiry.potential_customers.phone_number}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <p>No records found in the table.</p>
+        )}
+
         <Row>
-          <Col md={6}>
-            <Form.Group controlId="customer_id">
-              <Form.Label>Customer ID</Form.Label>
-              <Form.Control
-                type="number"
-                value={customer_id}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="Enter 6-digit User ID"
-                maxLength="6"
-                minLength="6"
-                required
-              />
-            </Form.Group>
-          </Col>
           <Col md={6}>
             <Form.Group controlId="date">
               <Form.Label>Date </Form.Label>
@@ -210,39 +217,6 @@ const CreateQuotation = () => {
 
         <Row>
           <Col md={12}>
-            <h4>All Enquiries</h4>
-            <Table striped bordered hover style={{ maxHeight: '250px',minHeight: '250px',overflowY: 'auto',fontSize: '0.8rem' }}>
-              <thead>
-                <tr>
-                  <th>Enquiry ID</th>
-                  <th>Remarks</th>
-                  <th>Date of Enquiry</th>
-                  <th>Customer Name</th>
-                  <th>Customer ID</th>
-                  <th>Phone Number</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allEnquiries.map((enquiry) => (
-                  <tr
-                    key={enquiry.enquiry_id}
-                    onDoubleClick={() => handleRowDoubleClick(enquiry.enquiry_id)}
-                  >
-                    <td>{enquiry.enquiry_id}</td>
-                    <td>{enquiry.remarks}</td>
-                    <td>{enquiry.date_of_enquiry}</td>
-                    <td>{enquiry.potential_customers.name}</td>
-                    <td>{enquiry.potential_customers.customer_id}</td>
-                    <td>{enquiry.potential_customers.phone_number}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col md={12}>
             <h4>Quoted Products</h4>
             {/* Display Enquiry ID, Customer Name, Customer ID, and Date */}
             {selectedEnquiryDetails && (
@@ -250,7 +224,7 @@ const CreateQuotation = () => {
                 <div>Enquiry ID: {selectedEnquiryDetails.enquiry_id}</div>
                 <div>Customer Name: {selectedEnquiryDetails.customer_name}</div>
                 <div>Customer ID: {selectedEnquiryDetails.customer_id}</div>
-                <div>Date: {selectedEnquiryDetails.date}</div>
+                <div>Date: {date.toLocaleDateString()}</div>
               </div>
             )}
 

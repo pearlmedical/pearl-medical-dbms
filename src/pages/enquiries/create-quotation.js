@@ -18,6 +18,7 @@ const CreateQuotation = () => {
   const [selectedEnquiryDetails,setSelectedEnquiryDetails] = useState(null);
   const [totalAmount,setTotalAmount] = useState(0);
   const [searchTerm,setSearchTerm] = useState('');
+  const [quotationID,setQuotationID] = useState(null);
   const pdfRef = useRef();
 
   const handleGeneratePDF = async () => {
@@ -67,7 +68,7 @@ const CreateQuotation = () => {
         `Customer Name`,
         `Customer ID`,
         `Enquiry ID`,
-        
+
       ];
       const customerDetails = [
         `${selectedEnquiryDetails.customer_name}`,
@@ -114,7 +115,7 @@ const CreateQuotation = () => {
       pdf.text('--xx--',pdf.internal.pageSize.width / 2,pdf.internal.pageSize.height - 15,{ align: 'center' });
 
       // Save or open the PDF
-      pdf.save(`Quotation_${selectedEnquiryDetails.enquiry_id}.pdf`);
+      pdf.save(`Quotation_${quotationID}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:',error);
     }
@@ -232,6 +233,7 @@ const CreateQuotation = () => {
         if (addQuotationPricingResponse.ok) {
           // Both APIs were successful
           setSuccessMessage(`Quotation created successfully with ID: ${addQuotationData.quotation_id}`);
+          setQuotationID(addQuotationData.quotation_id);
           setTimeout(() => {
             setSuccessMessage('');
           },3000);
@@ -307,110 +309,98 @@ const CreateQuotation = () => {
           <p>No records found in the table.</p>
         )}
 
-        <hr/>
+        <hr />
+        <Row>
+          <Col md={6}>
+            <Form.Group controlId="date">
+              <Form.Label><strong>Date of Quotation </strong> </Form.Label>
+              <DatePicker
+                selected={date}
+                onChange={(date) => setDateOfEnquiry(date)}
+                dateFormat="MMMM d, yyyy"
+                className="form-control"
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-        <div>
+        <Card ref={pdfRef} className="my-4 p-4">
           <Row>
-            <Col md={6}>
-              <Form.Group controlId="date">
-                <Form.Label><strong>Date of Quotation </strong> </Form.Label>
-                <DatePicker
-                  selected={date}
-                  onChange={(date) => setDateOfEnquiry(date)}
-                  dateFormat="MMMM d, yyyy"
-                  className="form-control"
-                  required
-                />
+            <Col md={12}>
+              <h4>Quotation</h4>
+              {/* Display Enquiry ID, Customer Name, Customer ID, and Date */}
+              {selectedEnquiryDetails && (
+                <div style={{ display: 'flex',flexDirection: 'column',gap: '2px' }}>
+                  <div>Enquiry ID: {selectedEnquiryDetails.enquiry_id}</div>
+                  <div>Customer Name: {selectedEnquiryDetails.customer_name}</div>
+                  <div>Customer ID: {selectedEnquiryDetails.customer_id}</div>
+                  <div>Date: {date.toLocaleDateString()}</div>
+                </div>
+              )}
+
+              {/* Quoted Products table */}
+              <Table striped bordered hover style={{ maxHeight: '300px',overflowY: 'auto',fontSize: '0.8rem' }}>
+                <thead>
+                  <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {quotedProducts.map((quotedProduct,index) => (
+                    <tr key={index}>
+                      <td>{quotedProduct.products.product_id}</td>
+                      <td>{quotedProduct.products.product_name}</td>
+                      <td>{quotedProduct.quantity}</td>
+                      <td>
+                        <FormControl
+                          type="number"
+                          step="0.001"
+                          value={quotedProduct.cost || 0}
+                          onChange={(e) => handleCostChange(index,e)}
+                          style={{ fontSize: '0.8rem' }}
+                        />
+                      </td>
+                      <td>{calculateAmount(quotedProduct)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+
+              {/* Clear Quoted Products and Total Amount */}
+              <Row>
+                <Col md={6} className="text-right">
+                  <strong>Total Amount: {calculateTotalAmount()}</strong>
+                </Col>
+                <Col md={6}>
+                  {quotedProducts.length > 0 && <Button variant="danger" onClick={handleClearQuotedProducts}>
+                    Clear Selection
+                  </Button>}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={9}>
+              <Form.Group controlId="remarks">
+                <Form.Label>Additional Remarks</Form.Label>
+                <Form.Control as="textarea" rows={2} value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder="Enter remarks" style={{ resize: 'none' }} />
               </Form.Group>
             </Col>
           </Row>
-
-          <Row>
-            <Col md={12}>
-              <Button variant="success" onClick={handleGeneratePDF}>
-                Generate PDF
-              </Button>
-            </Col>
-          </Row>
-
-          <Card ref={pdfRef} className="my-4 p-4">
-            <Row>
-              <Col md={12}>
-                <h4>Quotation</h4>
-                {/* Display Enquiry ID, Customer Name, Customer ID, and Date */}
-                {selectedEnquiryDetails && (
-                  <div style={{ display: 'flex',flexDirection: 'column',gap: '2px' }}>
-                    <div>Enquiry ID: {selectedEnquiryDetails.enquiry_id}</div>
-                    <div>Customer Name: {selectedEnquiryDetails.customer_name}</div>
-                    <div>Customer ID: {selectedEnquiryDetails.customer_id}</div>
-                    <div>Date: {date.toLocaleDateString()}</div>
-                  </div>
-                )}
-
-                {/* Quoted Products table */}
-                <Table striped bordered hover style={{ maxHeight: '300px',overflowY: 'auto',fontSize: '0.8rem' }}>
-                  <thead>
-                    <tr>
-                      <th>Product ID</th>
-                      <th>Product Name</th>
-                      <th>Quantity</th>
-                      <th>Cost</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {quotedProducts.map((quotedProduct,index) => (
-                      <tr key={index}>
-                        <td>{quotedProduct.products.product_id}</td>
-                        <td>{quotedProduct.products.product_name}</td>
-                        <td>{quotedProduct.quantity}</td>
-                        <td>
-                          <FormControl
-                            type="number"
-                            step="0.001"
-                            value={quotedProduct.cost || 0}
-                            onChange={(e) => handleCostChange(index,e)}
-                            style={{ fontSize: '0.8rem' }}
-                          />
-                        </td>
-                        <td>{calculateAmount(quotedProduct)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-
-                {/* Clear Quoted Products and Total Amount */}
-                <Row>
-                  <Col md={6}>
-                    {quotedProducts.length>0 && <Button variant="danger" onClick={handleClearQuotedProducts}>
-                      Clear Quoted Products
-                    </Button>}
-                  </Col>
-                  <Col md={6} className="text-right">
-                    <strong>Total Amount: {calculateTotalAmount()}</strong>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md={9}>
-                <Form.Group controlId="remarks">
-                  <Form.Label>Additional Remarks</Form.Label>
-                  <Form.Control as="textarea" rows={2} value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder="Enter remarks" style={{ resize: 'none' }} />
-                </Form.Group>
-              </Col>
-            </Row>
-          </Card>
-        </div>
-        <p></p>
-
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-
+        </Card>
         <Row>
-          <Col md={12}>
+          <Col md={2}>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Col>
+          <Col md={3}>
             <Button variant="success" onClick={handleGeneratePDF}>
               Generate PDF
             </Button>

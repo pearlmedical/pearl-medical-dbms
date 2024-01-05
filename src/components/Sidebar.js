@@ -27,25 +27,24 @@ const Sidebar = () => {
                                 <Nav.Link href="/sales/delete-product">Delete Product</Nav.Link>
                                 <Nav.Link href="/sales/add-product">Add Product</Nav.Link>
 
-                                <Nav.Link href="/sales/createUser">Create User</Nav.Link>
+                                <Nav.Link href="/sales/create-user">Create User</Nav.Link>
                                 <Nav.Link href="/sales/search-user">Search User</Nav.Link>
                                 <Nav.Link href="/sales/edit-user-details">Edit User Details</Nav.Link>
 
                                 <Nav.Link href="/sales/create-bill">Create Bill</Nav.Link>
                                 <Nav.Link href="/sales/search-bill">Search Bill</Nav.Link>
-                                <Nav.Link href="/sales/search-user-by-productId">Search User By Product</Nav.Link>
-                                <Nav.Link href="/sales/search-product-by-userid">Search Product By User</Nav.Link>
-                                <Nav.Link href="/sales/search-bill-by-userid">Search Bill By User</Nav.Link>
+                                <Nav.Link href="/sales/search-user-by-product">Search User By Product</Nav.Link>
+                                <Nav.Link href="/sales/search-product-by-user">Search Product By User</Nav.Link>
+                                <Nav.Link href="/sales/search-bill-by-user">Search Bill By User</Nav.Link>
                             </>
                         )}
-
 
                         {currentRoute.includes('enquiries') && (
                             <>
                                 <Nav.Link href="/enquiries/create-new-customer">Create New Customer</Nav.Link>
                                 <Nav.Link href="/enquiries/create-new-enquiry">Create New Enquiry</Nav.Link>
                                 <Nav.Link href="/enquiries/search-interests">Search Interests</Nav.Link>
-                                <Nav.Link href="/enquiries/search-enquiries">Search Enquiry</Nav.Link>
+                                <Nav.Link href="/enquiries/search-enquiries">Search Enquiries</Nav.Link>
                                 <Nav.Link href="/enquiries/create-quotation">Create Quotation</Nav.Link>
                             </>
                         )}

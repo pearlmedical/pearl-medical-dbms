@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import TitleBar from './TitleBar';
 import StatusBar from './StatusBar';
 import { useAuth } from '@/context/AuthContext';
-import LoginPage from '@/pages/login';
+import LoginPage from './Login';
 
 const Layout = ({ children }) => {
     const { isLoggedIn } = useAuth();

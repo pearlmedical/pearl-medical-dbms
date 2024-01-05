@@ -5,34 +5,34 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn,setIsLoggedIn] = useState(false);
-    const [userType,setUserType] = useState(''); // 'admin' or 'employee'
+    const [employeeID,setEmployeeID] = useState(null);
 
     useEffect(() => {
-        // Check if user is already logged in from sessionStorage
+        // Check if the user is already logged in from sessionStorage
         const storedLoginState = sessionStorage.getItem('loginState');
         if (storedLoginState) {
-            const { isLoggedIn,userType } = JSON.parse(storedLoginState);
+            const { isLoggedIn,employeeID } = JSON.parse(storedLoginState);
             setIsLoggedIn(isLoggedIn);
-            setUserType(userType);
+            setEmployeeID(employeeID);
         }
     },[]);
 
-    const login = (userType) => {
+    const login = (employeeID) => {
         setIsLoggedIn(true);
-        setUserType(userType);
+        setEmployeeID(employeeID);
         // Store login state in sessionStorage
-        sessionStorage.setItem('loginState',JSON.stringify({ isLoggedIn: true,userType }));
+        sessionStorage.setItem('loginState',JSON.stringify({ isLoggedIn: true,employeeID }));
     };
 
     const logout = () => {
         setIsLoggedIn(false);
-        setUserType('');
+        setEmployeeID(null);
         // Clear login state from sessionStorage
         sessionStorage.removeItem('loginState');
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn,userType,login,logout }}>
+        <AuthContext.Provider value={{ isLoggedIn,employeeID,login,logout }}>
             {children}
         </AuthContext.Provider>
     );

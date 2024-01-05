@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect,useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import { Form,Button,Container,Row,Col,Alert } from 'react-bootstrap';
 
 const LoginPage = () => {
-  const [loginId, setLoginId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { login, isLoggedIn } = useAuth();
+  const [loginId,setLoginId] = useState('');
+  const [password,setPassword] = useState('');
+  const [error,setError] = useState('');
+  const { login,isLoggedIn } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -15,11 +15,11 @@ const LoginPage = () => {
     if (isLoggedIn) {
       router.push('/');
     }
-  }, [isLoggedIn, router]);
+  },[isLoggedIn,router]);
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('/api/employee/login-employee', {
+      const response = await fetch('/api/employee/login-employee',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ const LoginPage = () => {
         setError(errorData.message || 'Invalid login credentials');
       }
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Error during login:',error);
       setError('Internal Server Error');
     }
   };
@@ -51,7 +51,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ backgroundColor: '#d1ecf1', padding: '20px', borderRadius: '10px' }}>
+    <Container className="mt-5" style={{ backgroundColor: '#d1ecf1',padding: '20px',borderRadius: '10px' }}>
       <Row className="justify-content-md-center">
         <Col md={6}>
           <h2 className="mb-4">Login Page</h2>

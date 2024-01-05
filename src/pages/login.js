@@ -44,6 +44,12 @@ const LoginPage = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <Container className="mt-5" style={{ backgroundColor: '#d1ecf1', padding: '20px', borderRadius: '10px' }}>
       <Row className="justify-content-md-center">
@@ -67,6 +73,7 @@ const LoginPage = () => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
               />
             </Form.Group>
 

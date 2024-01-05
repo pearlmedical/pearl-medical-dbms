@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
 
 const TitleBar = () => {
     const { logout } = useAuth();
@@ -14,13 +15,14 @@ const TitleBar = () => {
                 {/* <Container> */}
                 <Navbar.Brand href="/">
                     <div style={{ display: 'flex',alignItems: 'flex-start',color: 'white',padding: '0rem 2rem',textAlign: 'center' }}>
-                        <img
+                        
+                        <Image
                             alt=""
                             src="/Graphic2.jpg"
-                            width="100"
-                            height="50"
+                            width={100}
+                            height={50}
                             className="d-inline-block align-top"
-                        // style={{ marginLeft: '1rem' }}
+                            priority
                         />
                         {/* <h1 style={{ marginLeft: '1rem' }}>Pearl Medical</h1> */}
                     </div>

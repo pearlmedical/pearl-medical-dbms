@@ -20,7 +20,8 @@ const TitleBar = () => {
                             alt=""
                             src="/Graphic2.png"
                             width={100}
-                            height={50}
+                            height={40}
+                            style={{objectFit: 'cover'}}
                             className="d-inline-block align-top"
                             priority
                         />

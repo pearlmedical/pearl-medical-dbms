@@ -7,28 +7,38 @@ export default async function handler(req,res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { employee_id,access_levels } = req.body;
-
+  const { employee_id,access_level_names } = req.body;
+ const  access_levels=[];
   try {
+
+ 
+
     // Create a new employee in the employees table
-    const { data: newAccess,error } = await supabase
-      .from('employee_access')
-      .insert([
-        {
+    for(let i=0;i<access_level_names.length;i++){
+    const { data: level,error } = await supabase
+      .from('access_levels')
+      .select(
+        
 
-          access_levels,
-        },
-      ]).eq('employee_id',employee_id).select();
+            `
+           access_level_id
+          `
+        
+      ).eq('level_name',access_level_names[i]).select();
+      access_levels.push(level[0].access_level_id);
+      }
+    
 
-    if (error) {
-      throw error;
-    }
-
+      console.log(access_levels);
     // Fetch the created employee's ID
-    const access_key_id = newAccess[0]?.access_key_id;
+    //const access_key_id = newAccess[0]?.access_key_id;
+    const { data, error } = await supabase
+    .from('employee_access')
+    .update({ access_levels: access_levels })
+    .eq('employee_id', employee_id)
+    .select();
 
-
-    res.status(200).json({ access_key_id: access_key_id,access_levels: access_levels,message: 'Updated Acess successfully' });
+   res.status(200).json({data,message: 'Access Updated successfully' });
 
 
   } catch (error) {

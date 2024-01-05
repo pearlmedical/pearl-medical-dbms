@@ -16,6 +16,7 @@ export default async function handler(req, res) {
         employee_id,
         name,
         phone_number,
+        address,
         email_id
       `
 

@@ -52,6 +52,7 @@ const Sidebar = () => {
                         {currentRoute.includes('admin') && (
                             <>
                                 <Nav.Link href="/admin/create-new-employee">Create New Employee</Nav.Link>
+                                <Nav.Link href="/admin/update-employee-details">Update Employee Details</Nav.Link>
                                 <Nav.Link href="/admin/update-employee-access">Update Employee Access</Nav.Link>
                             </>
                         )}

@@ -3,11 +3,11 @@ import supabase from '../sales/dbConnect';
 
 
 export default async function handler(req, res) {
-  if (req.method !== 'PUT') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { employee_id, access_level_id } = req.body;
+  const { employee_id, access_levels } = req.body;
 
   try {
    
@@ -16,10 +16,10 @@ export default async function handler(req, res) {
     // Create a new employee in the employees table
     const { data: newAccess, error } = await supabase
       .from('employee_access')
-      .update([
+      .insert([
         {
             employee_id,
-            access_level_id,
+            access_levels,
         },
       ]).eq('employee_id',employee_id).select();
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     
 
-    res.status(200).json({access_key_id: access_key_id, access_level_id: access_level_id,message: 'Updated Acess successfully' });
+    res.status(200).json({access_key_id: access_key_id, access_levels: access_levels,message: 'Updated Acess successfully' });
   
 
 } catch (error) {

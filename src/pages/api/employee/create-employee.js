@@ -7,7 +7,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { name, address, phone_number, email_id, password, access_level_id } = req.body;
+  const { name, address, phone_number, email_id, password,  } = req.body;
+  const defaultaccess=[];
 
   try {
     // Hash the password using bcrypt and a random salt
@@ -41,12 +42,18 @@ export default async function handler(req, res) {
     const { data: newEmployeeAcces, accesserror }= await supabase.from('employee_access').insert([
       {
         employee_id: employeeId,
-        access_level_id: access_level_id,
+        access_levels: defaultaccess,
       },
     ]).select();
 
-    const access_key_id = newEmployee[0]?.access_key_id;
-    res.status(200).json({ employee_id: employeeId, access_level_id: access_level_id,message: 'Employee created successfully' });
+
+    if (accesserror) {
+      throw accesserror;
+    }
+
+    const access_key_id = newEmployeeAcces[0]?.access_key_id;
+    res.status(200).json({ employee_id: employeeId, 
+      access_levels: defaultaccess,access_key_id: access_key_id ,message: 'Employee created successfully' });
   } catch (error) {
     console.error('Error creating employee:', error);
     res.status(500).json({ message: 'Internal Server Error', error });

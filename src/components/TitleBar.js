@@ -18,7 +18,7 @@ const TitleBar = () => {
                         
                         <Image
                             alt=""
-                            src="/Graphic2.jpg"
+                            src="/Graphic2.png"
                             width={100}
                             height={50}
                             className="d-inline-block align-top"

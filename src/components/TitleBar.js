@@ -9,25 +9,29 @@ import { useEffect,useState } from 'react';
 
 const TitleBar = () => {
     const { logout } = useAuth();
-    const { employeeID } = useAuth();
-    const [employeeAccess,setEmployeeAccess] = useState([]);
+    // const { employeeID } = useAuth();
+    const { accessLevels } = useAuth();
 
-    useEffect(() => {
-        const fetchEmployeeAccess = async () => {
-            try {
-                const response = await fetch(`/api/employee/fetch-access-level-of-employee?employee_id=${employeeID}`);
-                const data = await response.json();
-                console.log('Employee access levels:',data.access_allowed);
-                setEmployeeAccess(data.access_allowed || []);
-            } catch (error) {
-                console.error('Error fetching employee access levels:',error);
-            }
-        };
+    // useEffect(() => {
+    //     console.log(accessLevels);
+    // },[]);
 
-        if (employeeID) {
-            fetchEmployeeAccess();
-        }
-    },[employeeID]);
+    // useEffect(() => {
+    //     const fetchEmployeeAccess = async () => {
+    //         try {
+    //             const response = await fetch(`/api/employee/fetch-access-level-of-employee?employee_id=${employeeID}`);
+    //             const data = await response.json();
+    //             console.log('Employee access levels:',data.access_allowed);
+    //             setEmployeeAccess(data.access_allowed || []);
+    //         } catch (error) {
+    //             console.error('Error fetching employee access levels:',error);
+    //         }
+    //     };
+
+    //     if (employeeID) {
+    //         fetchEmployeeAccess();
+    //     }
+    // },[employeeID]);
 
     return (
         <>
@@ -35,13 +39,13 @@ const TitleBar = () => {
                 {/* <Container> */}
                 <Navbar.Brand href="/">
                     <div style={{ display: 'flex',alignItems: 'flex-start',color: 'white',padding: '0rem 2rem',textAlign: 'center' }}>
-                        
+
                         <Image
                             alt=""
                             src="/Graphic2.png"
                             width={100}
                             height={40}
-                            style={{objectFit: 'cover'}}
+                            style={{ objectFit: 'cover' }}
                             className="d-inline-block align-top"
                             priority
                         />
@@ -59,7 +63,7 @@ const TitleBar = () => {
                         <Nav.Item>
                             <Nav.Link href="/enquiries">Enquiries</Nav.Link>
                         </Nav.Item>
-                        {employeeAccess.includes('admin') && (
+                        {accessLevels.includes('admin') && (
                             <Nav.Item>
                                 <Nav.Link href="/admin">Admin</Nav.Link>
                             </Nav.Item>

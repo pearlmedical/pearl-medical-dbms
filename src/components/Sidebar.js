@@ -9,31 +9,34 @@ import { useAuth } from '@/context/AuthContext';
 const Sidebar = () => {
     const router = useRouter();
     const currentRoute = router.pathname;
-    const { employeeID } = useAuth();
-    const [employeeAccess, setEmployeeAccess] = useState([]);
+    // const { employeeID } = useAuth();
+    // const [employeeAccess,setEmployeeAccess] = useState([]);
+    const { accessLevels } = useAuth();
 
-    useEffect(() => {
-        const fetchEmployeeAccess = async () => {
-            try {
-                const response = await fetch(`/api/employee/fetch-access-level-of-employee?employee_id=${employeeID}`);
-                const data = await response.json();
-                console.log('Employee access levels:', data.access_allowed);
-                setEmployeeAccess(data.access_allowed || []);
-            } catch (error) {
-                console.error('Error fetching employee access levels:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchEmployeeAccess = async () => {
+    //         try {
+    //             const response = await fetch(`/api/employee/fetch-access-level-of-employee?employee_id=${employeeID}`);
+    //             const data = await response.json();
+    //             console.log('Employee access levels:', data.access_allowed);
+    //             setEmployeeAccess(data.access_allowed || []);
+    //         } catch (error) {
+    //             console.error('Error fetching employee access levels:', error);
+    //         }
+    //     };
 
-        if (employeeID) {
-            fetchEmployeeAccess();
-        }
-    }, [employeeID]);
+    //     if (employeeID) {
+    //         fetchEmployeeAccess();
+    //     }
+    // }, [employeeID]);
 
-    const renderTab = (href, label) => (
-        <Nav.Link href={href} key={href}>
-            {label}
-        </Nav.Link>
-    );
+    // const renderTab = (href, label) => (
+    //     <Nav.Link href={href} key={href}>
+    //         {label}
+    //     </Nav.Link>
+    // );
+
+
 
     const salesTabs = [
         { href: '/sales/search-product', label: 'Search Product', accessLevel: 'search-product' },
@@ -78,7 +81,7 @@ const Sidebar = () => {
                         style={{ fontSize: '1rem', gap: '0' }}
                     >
                         {currentRoute.includes('sales') && salesTabs.map(({ href, label, accessLevel }) =>
-                            employeeAccess.includes(accessLevel) || employeeAccess.includes('admin') ? (
+                            accessLevels.includes(accessLevel) || accessLevels.includes('admin') ? (
                                 <Nav.Link href={href} key={href}>
                                     {label}
                                 </Nav.Link>
@@ -86,7 +89,7 @@ const Sidebar = () => {
                         )}
 
                         {currentRoute.includes('enquiries') && enquiriesTabs.map(({ href, label, accessLevel }) =>
-                            employeeAccess.includes(accessLevel) || employeeAccess.includes('admin') ? (
+                            accessLevels.includes(accessLevel) || accessLevels.includes('admin') ? (
                                 <Nav.Link href={href} key={href}>
                                     {label}
                                 </Nav.Link>
@@ -94,7 +97,7 @@ const Sidebar = () => {
                         )}
 
                         {currentRoute.includes('admin') && adminTabs.map(({ href, label, accessLevel }) =>
-                            employeeAccess.includes(accessLevel) || employeeAccess.includes('admin') ? (
+                            accessLevels.includes(accessLevel) || accessLevels.includes('admin') ? (
                                 <Nav.Link href={href} key={href}>
                                     {label}
                                 </Nav.Link>
@@ -102,7 +105,7 @@ const Sidebar = () => {
                         )}
 
                         {!currentRoute.includes('sales') && !currentRoute.includes('enquiries') && !currentRoute.includes('admin') && allTabs.map(({ href, label, accessLevel }) =>
-                            employeeAccess.includes(accessLevel) || employeeAccess.includes('admin') ? (
+                            accessLevels.includes(accessLevel) || accessLevels.includes('admin') ? (
                                 <Nav.Link href={href} key={href}>
                                     {label}
                                 </Nav.Link>

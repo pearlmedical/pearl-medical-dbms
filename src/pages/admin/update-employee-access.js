@@ -1,6 +1,7 @@
 // pages/update-employee-access.js
 import React,{ useState,useEffect } from 'react';
 import { Table,Form,Modal,Button } from 'react-bootstrap';
+import { useAuth } from '@/context/AuthContext';
 
 const UpdateEmployeesAccess = () => {
 
@@ -14,6 +15,7 @@ const UpdateEmployeesAccess = () => {
   const [searchTerm,setSearchTerm] = useState('');
   const [sortedField,setSortedField] = useState('employee_id');
   const [sortOrder,setSortOrder] = useState('asc');
+  const { login } = useAuth();
 
 
   // Fetch employees from the API
@@ -118,6 +120,9 @@ const UpdateEmployeesAccess = () => {
           const successMessage = `Updated access for employee: ${selectedEmployee.employee_id}`;
           // Display success message (you can use any toast/notification library here)
           alert(successMessage);
+
+          // Update access levels in the context
+          login(selectedEmployee.employee_id);
         } else {
           const errorData = await response.json();
           console.error('Error updating employee access:',errorData.message);

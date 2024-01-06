@@ -1,4 +1,4 @@
-// pages/create-bill.js
+// pages/create-enquiry.js
 
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Alert, Table, InputGroup, FormControl } from 'react-bootstrap';
@@ -7,40 +7,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 const CreateEnquiry = () => {
   const [customer_id, setUserId] = useState('');
-  const[date_of_enquiry, setDateOfEnquiry] = useState(new Date());
+  const [date_of_enquiry, setDateOfEnquiry] = useState(new Date());
+  const [followUpDate, setFollowUpDate] = useState(new Date());
   const [remarks, setRemarks] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // State for product search and selection
-  const [allProducts, setAllProducts] = useState([]); // Assuming you have an API to fetch products
+  const [allProducts, setAllProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
- 
-
-  // Function to handle product selection and removal
-  const handleProductAction = (product, quantity = 1) => {
-    const isProductSelected = selectedProducts.find((selected) => selected.product_id === product.product_id);
-
-    setSelectedProducts([...selectedProducts, { ...product, quantity }]);
-
-    if (isProductSelected) {
-      // If selected, remove from the list
-      const updatedSelectedProducts = selectedProducts.filter((selected) => selected.product_id !== product.product_id);
-      setSelectedProducts(updatedSelectedProducts);
-    } else {
-      // If not selected, add to the list with the specified quantity
-      setSelectedProducts([...selectedProducts, { ...product, quantity }]);
-    }
-  };
-
-  // Function to handle clearing the selected products
-  const handleClearSelected = () => {
-    setSelectedProducts([]);
-  };
-
-  // Fetch all products on component mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -59,10 +34,26 @@ const CreateEnquiry = () => {
     fetchProducts();
   }, []);
 
+  const handleProductAction = (product, quantity = 1) => {
+    const isProductSelected = selectedProducts.find((selected) => selected.product_id === product.product_id);
+
+    setSelectedProducts([...selectedProducts, { ...product, quantity }]);
+
+    if (isProductSelected) {
+      const updatedSelectedProducts = selectedProducts.filter((selected) => selected.product_id !== product.product_id);
+      setSelectedProducts(updatedSelectedProducts);
+    } else {
+      setSelectedProducts([...selectedProducts, { ...product, quantity }]);
+    }
+  };
+
+  const handleClearSelected = () => {
+    setSelectedProducts([]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate user_id format (6 digits)
     const userIdRegex = /^\d{6}$/;
     if (!userIdRegex.test(customer_id)) {
       setSuccessMessage('');
@@ -71,27 +62,23 @@ const CreateEnquiry = () => {
     }
 
     try {
-      // Make API call to addBill endpoint
       const response = await fetch('/api/potentialCustomers/add-enquiry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ customer_id, date_of_enquiry, remarks }),
+        body: JSON.stringify({ customer_id, date_of_enquiry, follow_up_date: followUpDate, remarks }),
       });
 
       if (response.ok) {
         const data = await response.json();
-     
 
-        // Make API call to another endpoint
         const postData = {
           customer_id: customer_id,
           enquiry_id: data.enquiry_id,
           products: selectedProducts,
+          follow_up_date: followUpDate,
         };
-
-        console.log(postData);
 
         try {
           const postResponse = await fetch('/api/potentialCustomers/add-interests-of-customer', {
@@ -103,17 +90,14 @@ const CreateEnquiry = () => {
           });
 
           if (postResponse.ok) {
-            // Handle success
             setTimeout(() => {
-              setSuccessMessage(`Enquiry created successfully with ID: ${data.intrest_id}`);
+              setSuccessMessage(`Enquiry created successfully with ID: ${data.enquiry_id}`);
             }, 3000);
           } else {
             const errorData = await postResponse.json();
-            // Handle error
           }
         } catch (error) {
           console.error('Error:', error);
-          // Handle error
         }
       } else {
         const errorData = await response.json();
@@ -127,7 +111,6 @@ const CreateEnquiry = () => {
     }
   };
 
-  // Function to handle increasing quantity in the selected products
   const handleIncreaseQuantity = (product) => {
     const updatedSelectedProducts = selectedProducts.map((selected) =>
       selected.product_id === product.product_id ? { ...selected, quantity: selected.quantity + 1 } : selected
@@ -135,7 +118,6 @@ const CreateEnquiry = () => {
     setSelectedProducts(updatedSelectedProducts);
   };
 
-  // Function to handle decreasing quantity in the selected products
   const handleDecreaseQuantity = (product) => {
     const updatedSelectedProducts = selectedProducts.map((selected) =>
       selected.product_id === product.product_id && selected.quantity > 0
@@ -152,18 +134,15 @@ const CreateEnquiry = () => {
     if (!isNaN(newQuantity) && newQuantity >= 0) {
       newSelectedProducts[index].quantity = newQuantity;
       setSelectedProducts(newSelectedProducts);
-      
     }
   };
 
   const handleRemoveProduct = (product) => {
-    // Remove the product from the list
     const updatedSelectedProducts = selectedProducts.filter((selected) => selected.product_id !== product.product_id);
     setSelectedProducts(updatedSelectedProducts);
   };
 
   const handleRowClick = (clickedProduct) => {
-    // Increase quantity if the product is already selected, otherwise add it with quantity 1
     const isProductSelected = selectedProducts.some((product) => product.product_id === clickedProduct.product_id);
 
     if (isProductSelected) {
@@ -212,9 +191,23 @@ const CreateEnquiry = () => {
           </Col>
         </Row>
 
-        {/* Billing Section */}
         <Row>
-          {/* Selected Products Table */}
+          <Col md={6}>
+            <Form.Group controlId="follow_up_date">
+              <Form.Label>Follow-up Date</Form.Label>
+              <div className="input-group">
+                <DatePicker
+                  selected={followUpDate}
+                  onChange={(date) => setFollowUpDate(date)}
+                  dateFormat="MMMM d, yyyy"
+                  className="form-control"
+                />
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row>
           <Col md={6}>
             <h4>Selected Products</h4>
             <Table striped bordered hover style={{ maxHeight: '300px', minHeight: '300px', overflowY: 'auto', fontSize: '0.8rem' }}>
@@ -267,7 +260,6 @@ const CreateEnquiry = () => {
             </Button>
           </Col>
 
-          {/* All Products Table */}
           <Col md={6}>
             <h4>All Products</h4>
             <InputGroup className="mb-3">
@@ -287,10 +279,7 @@ const CreateEnquiry = () => {
                   .map((product) => (
                     <tr
                       key={product.product_id}
-                      onClick={() => {
-                        handleRowClick(product);
-                
-                      }}
+                      onClick={() => handleRowClick(product)}
                     >
                       <td>{product.product_id}</td>
                       <td>{product.product_name}</td>

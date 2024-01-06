@@ -1,13 +1,20 @@
+// Import necessary libraries and components
 import React, { useState, useEffect } from 'react';
-import { Table, Form, Modal, Button } from 'react-bootstrap';
+import { Table, Form, Modal, Button, Alert } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const SearchEnquiries = () => {
   const [enquiries, setEnquiries] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [followUpDate, setFollowUpDate] = useState(new Date());
+  const [closeEnquiry, setCloseEnquiry] = useState(false);
+  const [forwardToSales, setForwardToSales] = useState(false);
+  const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
+  const [updateErrorMessage, setUpdateErrorMessage] = useState('');
 
-  // Fetch enquiries from the API
   const fetchAllEnquiries = async () => {
     try {
       const response = await fetch('/api/potentialCustomers/fetch-all-enquiries');
@@ -31,8 +38,20 @@ const SearchEnquiries = () => {
       const response = await fetch(`/api/potentialCustomers/fetch-enquiry-details?enquiryId=${enquiryId}`);
       if (response.ok) {
         const data = await response.json();
-        setSelectedEnquiry(data);
-        setShowModal(true);
+
+        // Check if both enquiryDetails and furtherDetails are present
+        if (data.enquiryDetails && data.furtherDetails && data.enquiryDetails.length > 0 && data.furtherDetails.length > 0) {
+          // Combine the details for the selected enquiry
+          const selectedEnquiryDetails = {
+            enquiryDetails: data.enquiryDetails,
+            furtherDetails: data.furtherDetails[0],
+          };
+console.log(selectedEnquiryDetails);
+          setSelectedEnquiry(selectedEnquiryDetails);
+          setShowModal(true);
+        } else {
+          console.error('Invalid API response:', data);
+        }
       } else {
         console.error('Error fetching enquiry details:', response.status, response.statusText);
       }
@@ -44,6 +63,47 @@ const SearchEnquiries = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedEnquiry(null);
+    setCloseEnquiry(false);
+    setForwardToSales(false);
+    setUpdateSuccessMessage('');
+    setUpdateErrorMessage('');
+  };
+
+  const handleUpdateEnquiry = async () => {
+    if (!selectedEnquiry) {
+      return;
+    }
+
+    const { enquiry_id, is_open } = selectedEnquiry.furtherDetails;
+
+    try {
+      const response = await fetch('/api/potentialCustomers/update-follow-up', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          enquiry_id,
+          follow_up_date: is_open ? followUpDate : null,
+          is_open: closeEnquiry || forwardToSales ? false: true,
+          closed_by: closeEnquiry ? 'Customer' : forwardToSales ? 'Sales' : null,
+        }),
+      });
+
+      if (response.ok) {
+        setUpdateSuccessMessage('Enquiry updated successfully.');
+        setUpdateErrorMessage('');
+        fetchAllEnquiries(); // Refresh the enquiries after update
+      } else {
+        const errorData = await response.json();
+        setUpdateSuccessMessage('');
+        setUpdateErrorMessage(`Error updating enquiry: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error updating enquiry:', error);
+      setUpdateSuccessMessage('');
+      setUpdateErrorMessage('Internal Server Error');
+    }
   };
 
   const filteredEnquiries = enquiries?.filter(
@@ -51,6 +111,8 @@ const SearchEnquiries = () => {
       enquiry.enquiry_id.toString().includes(searchTerm) ||
       enquiry.remarks.toLowerCase().includes(searchTerm.toLowerCase()) ||
       enquiry.date_of_enquiry.toString().includes(searchTerm) ||
+      enquiry.follow_up_date.toString().includes(searchTerm) ||
+      enquiry.is_open.toString().includes(searchTerm) ||
       enquiry.potential_customers.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -60,7 +122,7 @@ const SearchEnquiries = () => {
       <Form.Group controlId="searchForm">
         <Form.Control
           type="text"
-          placeholder="Search by Enquiry ID, Remarks, Date of Enquiry, or Customer Name"
+          placeholder="Search by Enquiry ID, Remarks, Date of Enquiry, Follow_up_date, open/closed, or Customer Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -68,12 +130,14 @@ const SearchEnquiries = () => {
       <hr />
       {filteredEnquiries.length > 0 ? (
         <Table striped bordered hover>
-        <thead>
+          <thead>
             <tr>
               <th>Enquiry ID</th>
               <th>Remarks</th>
               <th>Date of Enquiry</th>
               <th>Customer Name</th>
+              <th>Follow_up_Date</th>
+              <th>Open/Closed</th>
             </tr>
           </thead>
           <tbody>
@@ -87,6 +151,8 @@ const SearchEnquiries = () => {
                 <td>{enquiry.remarks}</td>
                 <td>{enquiry.date_of_enquiry}</td>
                 <td>{enquiry.potential_customers.name}</td>
+                <td>{enquiry.follow_up_date}</td>
+                <td>{enquiry.is_open ? 'Open' : 'Closed'}</td>
               </tr>
             ))}
           </tbody>
@@ -95,23 +161,40 @@ const SearchEnquiries = () => {
         <p>No records found in the table.</p>
       )}
 
-      {/* Modal to display enquiry details */}
       <EnquiryDetailsModal
         selectedEnquiry={selectedEnquiry}
         showModal={showModal}
         handleCloseModal={handleCloseModal}
+        setFollowUpDate={setFollowUpDate}
+        setCloseEnquiry={setCloseEnquiry}
+        setForwardToSales={setForwardToSales}
+        updateSuccessMessage={updateSuccessMessage}
+        updateErrorMessage={updateErrorMessage}
+        handleUpdateEnquiry={handleUpdateEnquiry}
+        followUpDate={followUpDate} // Pass followUpDate as a prop
       />
-
     </div>
   );
 };
 
-const EnquiryDetailsModal = ({ selectedEnquiry,showModal,handleCloseModal }) => {
-  if (!selectedEnquiry || selectedEnquiry.length === 0) {
+const EnquiryDetailsModal = ({
+  selectedEnquiry,
+  showModal,
+  handleCloseModal,
+  setFollowUpDate,
+  setCloseEnquiry,
+  setForwardToSales,
+  updateSuccessMessage,
+  updateErrorMessage,
+  handleUpdateEnquiry,
+}) => {
+  if (!selectedEnquiry) {
     return null;
   }
 
-  const { enquiry_id,potential_customers } = selectedEnquiry[0];
+  const { enquiryDetails, furtherDetails } = selectedEnquiry;
+  const { enquiry_id, potential_customers } = enquiryDetails[0];
+  const { is_open ,follow_up_date} = furtherDetails;
 
   return (
     <Modal show={showModal} onHide={handleCloseModal}>
@@ -132,7 +215,7 @@ const EnquiryDetailsModal = ({ selectedEnquiry,showModal,handleCloseModal }) => 
             </tr>
           </thead>
           <tbody>
-            {selectedEnquiry.map((enquiry,index) => (
+            {enquiryDetails.map((enquiry, index) => (
               <tr key={index}>
                 <td>{enquiry.quantity}</td>
                 <td>{enquiry.products.product_id}</td>
@@ -141,6 +224,60 @@ const EnquiryDetailsModal = ({ selectedEnquiry,showModal,handleCloseModal }) => 
             ))}
           </tbody>
         </Table>
+        {is_open ? (
+          <>
+            <Form.Group controlId="followUpDate">
+              <Form.Label>Follow-up Date</Form.Label>
+              <div className="input-group">
+           
+              <DatePicker
+                  selected={follow_up_date ? new Date(follow_up_date) : new Date()}
+                  onChange={(date) => setFollowUpDate(date)}
+                  dateFormat="MMMM d, yyyy"
+                  className="form-control"
+                  required
+                />
+
+
+              </div>
+            </Form.Group>
+
+            <Form.Group controlId="closeEnquiry">
+              <Form.Check
+                type="checkbox"
+                label="Close Enquiry"
+                onChange={(e) => setCloseEnquiry(e.target.checked)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="forwardToSales">
+              <Form.Check
+                type="checkbox"
+                label="Forward to Sales Team"
+                onChange={(e) => setForwardToSales(e.target.checked)}
+              />
+            </Form.Group>
+
+            <Button variant="primary" onClick={handleUpdateEnquiry}>
+              Update
+            </Button>
+
+            {updateSuccessMessage && (
+              <Alert variant="success" className="mt-3">
+                {updateSuccessMessage}
+              </Alert>
+            )}
+            {updateErrorMessage && (
+              <Alert variant="danger" className="mt-3">
+                {updateErrorMessage}
+              </Alert>
+            )}
+          </>
+        ) : (
+          <div style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
+            Enquiry Closed
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleCloseModal}>

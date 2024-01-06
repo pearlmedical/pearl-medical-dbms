@@ -55,6 +55,8 @@ const Sidebar = () => {
 
     const enquiriesTabs = [
         { href: '/enquiries/create-new-customer', label: 'Create New Customer', accessLevel: 'create-new-customer' },
+        { href: '/enquiries/search-customers', label: 'Search Customers', accessLevel: 'search-customers' },
+        { href: '/enquiries/edit-customer-details', label: 'Edit Customer Details', accessLevel: 'edit-customer-details' },
         { href: '/enquiries/create-new-enquiry', label: 'Create New Enquiry', accessLevel: 'create-new-enquiry' },
         { href: '/enquiries/search-interests', label: 'Search Interests', accessLevel: 'search-interests' },
         { href: '/enquiries/search-enquiries', label: 'Search Enquiries', accessLevel: 'search-enquiries' },

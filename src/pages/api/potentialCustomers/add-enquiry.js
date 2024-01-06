@@ -6,8 +6,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { customer_id, date_of_enquiry, remarks } = req.body;
-
+  const { customer_id, date_of_enquiry, remarks,follow_up_date } = req.body;
+ const is_open= true;
   try {
     // Validate the request body here if needed
 
@@ -19,7 +19,8 @@ export default async function handler(req, res) {
         customer_id,
           date_of_enquiry,
           remarks,
-       
+       follow_up_date,
+       is_open
         },
       ])
       .select();

@@ -50,7 +50,7 @@ const Sidebar = () => {
         { href: '/sales/search-bill', label: 'Search Bill', accessLevel: 'search-bill' },
         { href: '/sales/search-user-by-product', label: 'Search User By Product', accessLevel: 'search-user-by-product' },
         { href: '/sales/search-product-by-user', label: 'Search Product By User', accessLevel: 'search-product-by-user' },
-        { href: '/sales/search-bill-by-user', label: 'Search Bill By User', accessLevel: 'search-bill-by-user' },
+        { href: '/sales/search-bill-by-userid', label: 'Search Bill By User', accessLevel: 'search-bill-by-user' },
     ];
 
     const enquiriesTabs = [

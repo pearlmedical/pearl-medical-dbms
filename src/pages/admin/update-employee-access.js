@@ -121,8 +121,8 @@ const UpdateEmployeesAccess = () => {
           // Display success message (you can use any toast/notification library here)
           alert(successMessage);
 
-          // Update access levels in the context
-          login(selectedEmployee.employee_id);
+          // // Update access levels in the context
+          // login(selectedEmployee.employee_id);
         } else {
           const errorData = await response.json();
           console.error('Error updating employee access:',errorData.message);

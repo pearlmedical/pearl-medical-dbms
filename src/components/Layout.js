@@ -41,7 +41,9 @@ const Layout = ({ children }) => {
                 <TitleBar />
                 <div style={{ display: 'flex' }}>
                     <Sidebar />
-                    <div style={{ flex: 1,padding: '0rem 2rem',height: '100%',overflow: 'auto' }}>{children}</div>
+                    <div style={{ flex: 1,padding: '0rem 2rem',height: '100%',overflow: 'auto' }}>
+                        {children}
+                    </div>
                 </div>
                 <StatusBar />
             </div>

@@ -52,7 +52,7 @@ const Layout = ({ children }) => {
         checkAuthStatus();
     },[router.pathname,employeeID]);
 
-    if (!loading && !isLoggedIn) {
+    if (!isLoggedIn) {
         // Redirect to login page if not logged in
         return <LoginPage />;
     }

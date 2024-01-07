@@ -18,7 +18,8 @@ export default async function handler(req, res) {
         purchase_id,
         product_id,
         quantity,
-        user_id
+        user_id,
+        cost
       `)
       .eq('bill_id', billId);
 

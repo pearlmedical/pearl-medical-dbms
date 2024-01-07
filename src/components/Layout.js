@@ -13,6 +13,7 @@ const Layout = ({ children }) => {
     const [loading,setLoading] = useState(true);
     const router = useRouter();
     const [hasAccess,setHasAccess] = useState(null);
+    const [showAccessBlocked,setShowAccessBlocked] = useState(false);
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -40,11 +41,10 @@ const Layout = ({ children }) => {
                     console.error('Error checking file access:',response.statusText);
                     setHasAccess(false);
                 }
-
-                setLoading(false);
             } catch (error) {
                 console.error('Error checking file access:',error);
                 setHasAccess(false);
+            } finally {
                 setLoading(false);
             }
         };
@@ -52,11 +52,21 @@ const Layout = ({ children }) => {
         checkAuthStatus();
     },[router.pathname,employeeID]);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowAccessBlocked(true);
+        },3000);
+
+        return () => clearTimeout(timer);
+    },[showAccessBlocked]);
+
+
     if (!isLoggedIn) {
         // Redirect to login page if not logged in
         return <LoginPage />;
     }
 
+    // Display loading spinner until both employeeID and router.pathname are available
     if (loading || !employeeID || !router.pathname) {
         return (
             <div style={{ display: 'flex',justifyContent: 'center',alignItems: 'center',minHeight: '100vh' }}>
@@ -65,8 +75,14 @@ const Layout = ({ children }) => {
         );
     }
 
-    if (!hasAccess) {
-        return <AccessBlocked />;
+
+
+    else if (!hasAccess) {
+        // return <AccessBlocked />;
+
+        if (showAccessBlocked) {
+            return <AccessBlocked />;
+        }
     }
 
     return (

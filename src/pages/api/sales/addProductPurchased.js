@@ -12,14 +12,15 @@ export default async function handler(req, res) {
     // Validate the request body here if needed
 
     // Create an array of objects to be inserted
-    const rowsToInsert = products.map(({ product_id, quantity }) => ({
+    const rowsToInsert = products.map(({ product_id, quantity,cost }) => ({
         user_id,
       bill_id,
       product_id,
       quantity,
+      cost
     }));
 
-    console.log('Rows to Insert:', rowsToInsert);
+
 
     // Insert all rows into the products_purchased table
     const { data, error } = await supabase

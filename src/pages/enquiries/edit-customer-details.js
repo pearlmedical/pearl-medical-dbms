@@ -14,7 +14,7 @@ const EditCustomer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/potentialCustomers/fetch-all-customers');
+        const response = await fetch('/api/potentialCustomers/fetch-all-customers'); // Update API endpoint URL
         if (response.ok) {
           const data = await response.json();
           setCustomers(data);
@@ -41,14 +41,14 @@ const EditCustomer = () => {
 
   const handleUpdate = async (updatedCustomer) => {
     try {
-      const response = await fetch('/api/potentialCustomers/update-customer-details', {
+      const response = await fetch('/api/potentialCustomers/update-customer-details', { // Update API endpoint URL
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedCustomer),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         const updatedCustomers = customers.map((customer) =>
@@ -67,7 +67,6 @@ const EditCustomer = () => {
       // Handle error scenarios as needed
     }
   };
-  
 
   const handleCloseModal = () => {
     setEditingCustomer(null);
@@ -92,7 +91,7 @@ const EditCustomer = () => {
             <th onClick={() => handleSort('customer_id')}>Customer ID</th>
             <th onClick={() => handleSort('name')}>Name</th>
             <th onClick={() => handleSort('address')}>Address</th>
-            <th onClick={() => handleSort('organisation_name')}>Organization</th>
+            <th onClick={() => handleSort('organization_name')}>Organization</th>
             <th onClick={() => handleSort('phone_number')}>Phone Number</th>
             <th onClick={() => handleSort('email_id')}>Email ID</th>
           </tr>
@@ -107,7 +106,7 @@ const EditCustomer = () => {
               <td>{customer.customer_id}</td>
               <td>{customer.name}</td>
               <td>{customer.address}</td>
-              <td>{customer.organisation_name}</td>
+              <td>{customer.organization_name}</td>
               <td>{customer.phone_number}</td>
               <td>{customer.email_id}</td>
             </tr>
@@ -135,10 +134,31 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
     customer_id,
     name,
     address,
-    organisation_name,
+    organization_name,
     phone_number,
     email_id,
   } = editingCustomer;
+
+  const [updatedCustomer, setUpdatedCustomer] = useState({
+    customer_id,
+    name,
+    address,
+    organization_name,
+    phone_number,
+    email_id,
+  });
+
+  const handleInputChange = (field, value) => {
+    setUpdatedCustomer((prevCustomer) => ({
+      ...prevCustomer,
+      [field]: value,
+    }));
+  };
+
+  const handleUpdateClick = () => {
+    handleUpdate(updatedCustomer);
+    handleCloseModal();
+  };
 
   return (
     <Modal show={showModal} onHide={handleCloseModal}>
@@ -152,8 +172,8 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
             <Form.Control
               type="text"
               placeholder="Enter name"
-              value={name || ''}
-              onChange={(e) => handleUpdate({ ...editingCustomer, name: e.target.value })}
+              value={updatedCustomer.name || ''}
+              onChange={(e) => handleInputChange('name', e.target.value)}
             />
           </Form.Group>
           <Form.Group controlId="formAddress">
@@ -161,8 +181,8 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
             <Form.Control
               type="text"
               placeholder="Enter address"
-              value={address || ''}
-              onChange={(e) => handleUpdate({ ...editingCustomer, address: e.target.value })}
+              value={updatedCustomer.address || ''}
+              onChange={(e) => handleInputChange('address', e.target.value)}
             />
           </Form.Group>
           <Form.Group controlId="formOrganization">
@@ -170,8 +190,8 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
             <Form.Control
               type="text"
               placeholder="Enter organization"
-              value={organisation_name || ''}
-              onChange={(e) => handleUpdate({ ...editingCustomer, organisation_name: e.target.value })}
+              value={updatedCustomer.organization_name || ''}
+              onChange={(e) => handleInputChange('organization_name', e.target.value)}
             />
           </Form.Group>
           <Form.Group controlId="formPhoneNumber">
@@ -179,8 +199,8 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
             <Form.Control
               type="text"
               placeholder="Enter phone number"
-              value={phone_number || ''}
-              onChange={(e) => handleUpdate({ ...editingCustomer, phone_number: e.target.value })}
+              value={updatedCustomer.phone_number || ''}
+              onChange={(e) => handleInputChange('phone_number', e.target.value)}
             />
           </Form.Group>
           <Form.Group controlId="formEmail">
@@ -188,8 +208,8 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
             <Form.Control
               type="email"
               placeholder="Enter email ID"
-              value={email_id || ''}
-              onChange={(e) => handleUpdate({ ...editingCustomer, email_id: e.target.value })}
+              value={updatedCustomer.email_id || ''}
+              onChange={(e) => handleInputChange('email_id', e.target.value)}
             />
           </Form.Group>
         </Form>
@@ -198,7 +218,7 @@ const CustomerDetailsModal = ({ editingCustomer, showModal, handleCloseModal, ha
         <Button variant="secondary" onClick={handleCloseModal}>
           Close
         </Button>
-        <Button variant="primary" onClick={() => handleUpdate(editingCustomer)}>
+        <Button variant="primary" onClick={handleUpdateClick}>
           Update
         </Button>
       </Modal.Footer>

@@ -44,10 +44,6 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.removeItem('loginState');
     };
 
-    useEffect(() => {
-        console.log('Employee access levels in state:',accessLevels);
-    },[accessLevels]); // Add this useEffect to log accessLevels changes
-
     return (
         <AuthContext.Provider value={{ isLoggedIn,employeeID,accessLevels,login,logout }}>
             {children}

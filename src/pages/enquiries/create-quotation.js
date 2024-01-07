@@ -23,103 +23,114 @@ const CreateQuotation = () => {
 
   const handleGeneratePDF = async () => {
     try {
-      // Initialize jspdf with the 'p' (portrait) orientation
-      const pdf = new jsPDF('p','mm','a4');
+        // Initialize jspdf with the 'p' (portrait) orientation
+        const pdf = new jsPDF('p', 'mm', 'a4');
 
-      // Fetch the logo (replace 'your-logo-url' with the actual URL)
-      const logoUrl = '/Graphic2.png';
-      const logoResponse = await fetch(logoUrl);
-      const logoBlob = await logoResponse.blob();
-      const logoDataUrl = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(logoBlob);
-      });
+        // Fetch the logo (replace 'your-logo-url' with the actual URL)
+        const logoUrl = '/Graphic2.png';
+        const logoResponse = await fetch(logoUrl);
+        const logoBlob = await logoResponse.blob();
+        const logoDataUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(logoBlob);
+        });
 
-      // Add a page border
-      pdf.rect(5,5,pdf.internal.pageSize.width - 10,pdf.internal.pageSize.height - 10);
+        // Add a page border
+        pdf.rect(5, 5, pdf.internal.pageSize.width - 10, pdf.internal.pageSize.height - 10);
 
-      // Add logo
-      pdf.addImage(logoDataUrl,'JPEG',15,0,30,30);
+        // Add logo
+        pdf.addImage(logoDataUrl, 'JPEG', 20, 1, 30, 30);
 
-      // Logo and Company Name
-      // pdf.setFontSize(20);
-      // pdf.text('Pearl Medical System',40,25);
+        // Pearl Medical Systems
+        pdf.setFont('bold');
+        pdf.setFontSize(35);
+        pdf.text('Pearl Medical Systems', 60, 20);
+        pdf.setFont('normal');
+        // Products Quotation
+        pdf.setFontSize(20);
+        pdf.text('Products Quotation', pdf.internal.pageSize.width / 2, 40, { align: 'center' });
 
-      pdf.setFont('normal');
-      // Products Quotation
-      pdf.setFontSize(20);
-      pdf.text('Products Quotation',pdf.internal.pageSize.width / 2,18,{ align: 'center' });
+        // Date
+        pdf.setFontSize(12);
+        pdf.text(`Date: ${date.toLocaleDateString()}`, 15, 55);
 
-      // Date
-      pdf.setFontSize(12);
-      pdf.text(`Date: ${date.toLocaleDateString()}`,15,27);
+        // Customer Details
+        pdf.setFontSize(16);
+        pdf.text('Customer Details', 15, 65);
+        const customerDetailsHeads = [
+            `Customer Name`,
+            `Customer ID`,
+            `Enquiry ID`,
+        ];
+        const customerDetails = [
+            `${selectedEnquiryDetails.customer_name}`,
+            `${selectedEnquiryDetails.customer_id}`,
+            `${selectedEnquiryDetails.enquiry_id}`,
+        ];
+        pdf.text(customerDetailsHeads, 15, 80);
+        pdf.text(customerDetails, 65, 80);
 
-      // Customer Details
-      pdf.setFontSize(16);
-      pdf.text('Customer Details',15,35);
-      const textWidth = 50;//pdf.getStringUnitWidth('Customer Details') * pdf.internal.getFontSize();
-      const textHeight = pdf.internal.getLineHeight();
-      pdf.setLineWidth(0.25);
-      pdf.line(15,17.5 + textHeight,15 + textWidth,17.5 + textHeight);
+        // Quoted Products
+        pdf.setFontSize(16);
+        pdf.text('Quoted Products', pdf.internal.pageSize.width / 2, 105, { align: 'center' });
 
-      pdf.setFontSize(12);
-      const customerDetailsHeads = [
-        `Customer Name`,
-        `Customer ID`,
-        `Enquiry ID`,
+        // Quoted Products table
+        const tableData = quotedProducts.map((quotedProduct) => [
+            quotedProduct.products.product_id.toString(),
+            quotedProduct.products.product_name,
+            quotedProduct.quantity.toString(),
+            quotedProduct.cost ? quotedProduct.cost.toFixed(3) : '0',
+            calculateAmount(quotedProduct).toFixed(3),
+        ]);
 
-      ];
-      const customerDetails = [
-        `${selectedEnquiryDetails.customer_name}`,
-        `${selectedEnquiryDetails.customer_id}`,
-        `${selectedEnquiryDetails.enquiry_id}`,
+        pdf.autoTable({
+            head: [['Product ID', 'Product Name', 'Quantity', 'Cost', 'Amount']],
+            body: tableData,
+            startY: 120,
+        });
 
-      ];
-      pdf.text(customerDetailsHeads,15,40);
-      pdf.text(customerDetails,50,40);
+        // Amount
+        pdf.setFont('bold');
+        pdf.text(`Amount:    INR ${calculateTotalAmount()}`, 130, pdf.autoTable.previous.finalY + 10, {
+            align: 'left',
+        });
+        pdf.setFont('normal');
 
-      // Quoted Products
-      pdf.setFontSize(16);
-      pdf.text('Quoted Products',pdf.internal.pageSize.width / 2,55,{ align: 'center' });
+        // Additional Remarks
+        pdf.setFontSize(14);
+        pdf.text(`Additional Remarks :-`, 15, pdf.autoTable.previous.finalY + 40);
+        pdf.setFontSize(12);
+        pdf.text(`${remarks}`, 60, pdf.autoTable.previous.finalY + 40);
+        pdf.setFontSize(10);
+        const batwaraText = `--------------------------------------------------------------------------------------------------------------------------------------------------------------`;
+        const declarationText = `
+            Declaration: This is a computer-generated document. No signature is required.
+            Bank Details: HDFC BANK , A/C NO. 50200030755830, IFSC : HDFC0001375 
+            `;
+        const batwaraText2 = `----------------------------------------------------------------------------------------------------------------------------------------------------------------`;
+        pdf.text(15, pdf.internal.pageSize.height - 50, batwaraText);
+        pdf.text(15, pdf.internal.pageSize.height - 45, declarationText);
+        pdf.text(15, pdf.internal.pageSize.height - 32, batwaraText2);
 
-      // Quoted Products table
-      const tableData = quotedProducts.map((quotedProduct) => [
-        quotedProduct.products.product_id.toString(),
-        quotedProduct.products.product_name,
-        quotedProduct.quantity.toString(),
-        quotedProduct.cost ? quotedProduct.cost.toFixed(3) : '0',
-        calculateAmount(quotedProduct).toFixed(3),
-      ]);
+        // Receiver and Authorized Signatures
+        pdf.setFontSize(12);
+        const signaturesText = `
+            Receiver Signature: ____________________________
+            Authorized Signature: ____________________________
+            `;
+        pdf.text(15, pdf.internal.pageSize.height - 30, signaturesText);
 
-      pdf.autoTable({
-        head: [['Product ID','Product Name','Quantity','Cost','Amount']],
-        body: tableData,
-        startY: 60,
-      });
+        // Page Ending Line
+        pdf.text('--xx--', pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 15, { align: 'center' });
 
-      // Amount
-      pdf.setFont('bold');
-      pdf.text(`Amount:    INR ${calculateTotalAmount()}`,15,pdf.autoTable.previous.finalY + 10,{
-        align: 'left',
-      });
-      pdf.setFont('normal');
-
-      // Additional Remarks
-      pdf.setFontSize(14);
-      pdf.text(`Additional Remarks`,15,pdf.autoTable.previous.finalY + 20);
-      pdf.setFontSize(12);
-      pdf.text(`${remarks}`,15,pdf.autoTable.previous.finalY + 25);
-
-      // Page Ending Line
-      pdf.text('--xx--',pdf.internal.pageSize.width / 2,pdf.internal.pageSize.height - 15,{ align: 'center' });
-
-      // Save or open the PDF
-      pdf.save(`Quotation_${quotationID}.pdf`);
+        // Save or open the PDF
+        pdf.save(`Quotation_${quotationID}.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:',error);
+        console.error('Error generating PDF:', error);
     }
-  };
+};
+
 
 
 

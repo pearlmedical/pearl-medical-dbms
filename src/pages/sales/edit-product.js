@@ -73,6 +73,12 @@ const EditProduct = () => {
     setShowModal(false);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div>
       <h2>Edit Product Details</h2>
@@ -142,6 +148,7 @@ const EditProduct = () => {
                 placeholder="Enter remarks"
                 value={editingProduct?.remarks || ''}
                 onChange={(e) => setEditingProduct({ ...editingProduct,remarks: e.target.value })}
+                onKeyPress={handleKeyPress}
               />
             </Form.Group>
           </Form>

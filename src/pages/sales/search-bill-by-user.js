@@ -175,6 +175,7 @@ const SearchBillByUserId = () => {
                                         <th>Purchase ID</th>
                                         <th>Product ID</th>
                                         <th>Quantity</th>
+                                        <th>Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -183,6 +184,7 @@ const SearchBillByUserId = () => {
                                             <td>{purchase.purchase_id}</td>
                                             <td>{purchase.product_id}</td>
                                             <td>{purchase.quantity}</td>
+                                            <td>{purchase.cost}</td>
                                         </tr>
                                     ))}
                                 </tbody>

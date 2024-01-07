@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     
     }));
 
-    console.log('Rows to Insert:', rowsToInsert);
+  
 
     // Insert all rows into the products_interested_in table
     const { data, error } = await supabase

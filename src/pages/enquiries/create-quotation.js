@@ -146,21 +146,32 @@ const CreateQuotation = () => {
       const response = await fetch(`/api/potentialCustomers/fetch-enquiry-details?enquiryId=${enquiryId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+  
         setSelectedEnquiryDetails({
-          enquiry_id: data[0].enquiry_id,
-          customer_name: data[0].potential_customers.name,
-          customer_id: data[0].potential_customers.customer_id,
-          // date: data[0].date_of_enquiry,
+          enquiry_id: data.enquiryDetails[0]?.enquiry_id || '',
+          customer_name: data.enquiryDetails[0]?.potential_customers?.name || '',
+          customer_id: data.enquiryDetails[0]?.potential_customers?.customer_id || '',
         });
-        setQuotedProducts(data);
+  
+        // Extracting quoted products from the response
+        const quotedProducts = data.enquiryDetails.map((enquiryDetail) => ({
+          quantity: enquiryDetail.quantity || 0,
+          products: {
+            product_id: enquiryDetail.products?.product_id || '',
+            product_name: enquiryDetail.products?.product_name || '',
+          },
+          cost: 0, // Assuming the cost is not provided in the API response
+        }));
+  
+        setQuotedProducts(quotedProducts);
       } else {
-        console.error('Error fetching enquiry details:',response.status,response.statusText);
+        console.error('Error fetching enquiry details:', response.status, response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching enquiry details:',error);
+      console.error('Error fetching enquiry details:', error);
     }
   };
+  
 
   const calculateAmount = (quotedProduct) => {
     return (quotedProduct.cost || 0) * quotedProduct.quantity;

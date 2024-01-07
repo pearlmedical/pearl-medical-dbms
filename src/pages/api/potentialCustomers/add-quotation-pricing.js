@@ -8,7 +8,6 @@ export default async function handler(req, res) {
 
   const { customer_id,enquiry_id,  products,quotation_id } = req.body;
 
-  console.log('Request Body:', req.body);
   try {
     // Validate the request body here if needed
 
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
     
     }));
 
-    console.log('Rows to Insert:', rowsToInsert);
+
 
     // Insert all rows into the quotation pricing  table
     const { data, error } = await supabase

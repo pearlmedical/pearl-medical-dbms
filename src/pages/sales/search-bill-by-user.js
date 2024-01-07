@@ -184,7 +184,7 @@ const SearchBillByUserId = () => {
                                             <td>{purchase.purchase_id}</td>
                                             <td>{purchase.product_id}</td>
                                             <td>{purchase.quantity}</td>
-                                            <td>{purchase.cost}</td>
+                                            <td>{purchase.cost ? purchase.cost : "Not Added"}</td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -7,13 +7,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App({ Component,pageProps }) {
   return (
-    <AuthProvider>
-      <AccessProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </AccessProvider>
-    </AuthProvider>
+    <>
+      <h1> Site Down </h1>
+      <h5> Developers were not paid </h5>
+    </>
+    // <AuthProvider>
+    //   <AccessProvider>
+    //     <Layout>
+    //       <Component {...pageProps} />
+    //     </Layout>
+    //   </AccessProvider>
+    // </AuthProvider>
   );
 }
 
